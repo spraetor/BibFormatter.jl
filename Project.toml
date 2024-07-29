@@ -1,0 +1,7 @@
+name = "BibtexFormatter"
+uuid = "4e8691f6-bd88-4c22-a28c-d5957cb74d98"
+authors = ["Simon Praetorius <simon.praetorius@tu-dresden.de>"]
+version = "0.1.0"
+
+[deps]
+BibParser = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
