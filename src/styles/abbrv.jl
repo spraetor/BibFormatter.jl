@@ -1,6 +1,6 @@
 struct Abbrv <: BibliographyStyle end
 
-formatAuthor(style::Abbrv, von, last, junior, first, second)::String = formatAuthorFirstLast(von, last, junior, first, second)
+formatAuthor(style::Abbrv, von, last, junior, first, second)::String = formatAuthorFLast(von, last, junior, first, second)
 authorDelimStyle(style::Abbrv) = ","
 
 formatPages(_::Abbrv, pages::AbstractString)::String = joinNotEmpty(isMultiplePages(pages) ? "pages " : "page ",pages)

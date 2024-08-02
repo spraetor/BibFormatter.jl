@@ -7,7 +7,8 @@ function formatTitle(style::BibliographyStyle, title::AbstractString)::String
   chopsuffix(title,".")
 end
 
-function formatAuthorFirstLast(von, last, junior, first, second)::String
+# F.~S. von Last, Junior
+function formatAuthorFLast(von, last, junior, first, second)::String
   components = []
   pushNotEmpty!(components, abbreviateName(strip(first)))
   pushNotEmpty!(components, abbreviateName(strip(second)))
@@ -15,7 +16,17 @@ function formatAuthorFirstLast(von, last, junior, first, second)::String
   return join(components, " ")
 end
 
-function formatAuthorLastFirst(von, last, junior, first, second)::String
+# First~Second von Last, Junior
+function formatAuthorFirstLast(von, last, junior, first, second)::String
+  components = []
+  pushNotEmpty!(components, strip(first))
+  pushNotEmpty!(components, strip(second))
+  pushNotEmpty!(components, joinNotEmpty(von," ") * last * joinNotEmpty(", ",junior))
+  return join(components, " ")
+end
+
+# von Last, Junior, F.~S.
+function formatAuthorLastF(von, last, junior, first, second)::String
   firstNames = []
   pushNotEmpty!(firstNames, abbreviateName(strip(first)))
   pushNotEmpty!(firstNames, abbreviateName(strip(second)))
@@ -28,9 +39,23 @@ function formatAuthorLastFirst(von, last, junior, first, second)::String
   return join(components, ", ")
 end
 
+# von Last, Junior, First~Second
+function formatAuthorLastFirst(von, last, junior, first, second)::String
+  firstNames = []
+  pushNotEmpty!(firstNames, strip(first))
+  pushNotEmpty!(firstNames, strip(second))
+  _first = join(firstNames, " ")
+
+  components = []
+  pushNotEmpty!(components, joinNotEmpty(von," ") * last)
+  pushNotEmpty!(components, junior)
+  pushNotEmpty!(components, _first)
+  return join(components, ", ")
+end
+
 # default author formatting
 function formatAuthor(style::BibliographyStyle, von, last, junior, first, second)::String
-  formatAuthorFirstLast(von, last, junior, first, second)
+  formatAuthorFLast(von, last, junior, first, second)
 end
 
 # default author delimiting symbol

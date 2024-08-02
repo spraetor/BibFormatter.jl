@@ -1,6 +1,6 @@
 struct Apalike <: BibliographyStyle end
 
-formatAuthor(style::Apalike, von, last, junior, first, second)::String = formatAuthorLastFirst(von, last, junior, first, second)
+formatAuthor(style::Apalike, von, last, junior, first, second)::String = formatAuthorLastF(von, last, junior, first, second)
 authorDelimStyle(style::Apalike) = ","
 
 function formatArticle(style::Apalike, authors, title, journal, year; volume="", number="", pages="", month="", note="")
