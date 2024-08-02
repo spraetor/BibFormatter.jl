@@ -8,8 +8,8 @@ joinNotEmpty(s1::AbstractString, s2::AbstractString, s...) = joinNotEmpty(joinNo
 
 abbreviateName(str::AbstractString) = !isempty(str) ? str[1] * "." : ""
 
-isMultiplePages(pages::AbstractString)::Bool = ("-" in pages)
-isMultipleAuthors(authors::AbstractString)::Bool = (" and " in authors)
+isMultiplePages(pages::AbstractString)::Bool = occursin("-", pages)
+isMultipleAuthors(authors::AbstractString)::Bool = occursin(" and ", authors)
 
 function checkRequiredField(type::AbstractString, field::AbstractString)
   if isempty(field)

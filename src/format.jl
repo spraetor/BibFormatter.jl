@@ -24,7 +24,7 @@ function formatAuthorLastFirst(first, middle, last)::String
 end
 
 # default author formatting
-function formatAuthor(style::BibliographyStyle, first, middle, last)::String 
+function formatAuthor(style::BibliographyStyle, first, middle, last)::String
   formatAuthorFirstLast(first,middle,last)
 end
 
@@ -65,62 +65,75 @@ end
 formatArticle(style::BibliographyStyle, authors, title, journal, year; volume="", number="", pages="", month="", note="") = "not implemented"
 formatBook(style::BibliographyStyle, title, publisher, year; authors="", editors="", volume="", number="", series="", address="", edition="", month="", note="") = "not implemented"
 formatBooklet(style::BibliographyStyle, title; authors="", howpublished="", address="", month="", year="", note="") = "not implemented"
-formatConference(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="", note="") = "not implemented"
+#formatConference(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="", note="") = "not implemented"
 formatInBook(style::BibliographyStyle, title, chapter, publisher, year; authors="", editors="", volume="", number="", series="", type="", address="", edition="", month="", pages="", note="") = "not implemented"
 formatInCollection(style::BibliographyStyle, authors, title, booktitle, publisher, year; editors="", volume="", number="", series="", type="", chapter="", pages="", address="", edition="", month="", note="") = "not implemented"
-formatInProceedings(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="") = "not implemented"
+#formatInProceedings(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="") = "not implemented"
 formatManual(style::BibliographyStyle, title, year; authors="", organization="", address="", edition="", month="", note="") = "not implemented"
 formatMastersThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = "not implemented"
 formatMisc(style::BibliographyStyle; authors="", title="", howpublished="", month="", year="", note="") = "not implemented"
 formatPhDThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = "not implemented"
-formatProceedings(style::BibliographyStyle, title, year; editors="", volume="", number="", series="", address="", month="", publisher="") = "not implemented"
+formatProceedings(style::BibliographyStyle, title, year; editors="", volume="", number="", series="", organization="", address="", month="", publisher="", note="") = "not implemented"
 formatTechreport(style::BibliographyStyle, authors, title, institution, year; type="", number="", address="", month="", note="") = "not implemented"
-formatUnpublished(style::BibliographyStyle, authors, title, note; month="", year="") = "not implemented"
+formatUnpublished(style::BibliographyStyle, authors, title, note; howpublished="", month="", year="") = "not implemented"
 
 
 function _format(style::BibliographyStyle, data::BibInternal.Entry)::String
+  # preprocess some fields
+  authors = formatAuthors(style, data.authors)
+  editors = formatAuthors(style, data.editors)
+  title = formatTitle(style, data.title)
+  booktitle = formatTitle(style, data.booktitle)
   note = get(data.fields,"note","")
   if data.type == "article"
     checkRequiredFields("article", data.authors, data.title, data.in.journal, data.date.year)
-    # preprocess some fields
-    authors = formatAuthors(style, data.authors)
-    title = formatTitle(style, data.title)
-    return formatArticle(style, authors, title, data.in.journal, data.date.year; 
+    return formatArticle(style, authors, title, data.in.journal, data.date.year;
       volume=data.in.volume, number=data.in.number, pages=data.in.pages, month=data.date.month, note=note)
   elseif data.type == "book"
     checkRequiredFields("book", [data.authors; data.editors], data.title, data.in.publisher, data.date.year)
-    # preprocess some fields
-    authors = formatAuthors(style, data.authors)
-    editors = formatAuthors(style, data.editors)
-    title = formatTitle(style, data.title)
-    return formatBook(style, title, data.in.publisher, data.date.year; authors=authors, editors=editors, 
+    return formatBook(style, title, data.in.publisher, data.date.year; authors=authors, editors=editors,
       volume=data.in.volume, number=data.in.number, series=data.in.series, address=data.in.address, edition=data.in.edition, month=data.date.month, note=note)
   elseif data.type == "booklet"
     checkRequiredFields("booklet", data.title)
-    # preprocess some fields
-    authors = formatAuthors(style, data.authors)
-    title = formatTitle(style, data.title)
-    return formatBooklet(style, title; authors=authors, howpublished=data.access.howpublished, 
+    return formatBooklet(style, title; authors=authors, howpublished=data.access.howpublished,
       address=data.in.address, month=data.date.month, year=data.date.year, note=note)
   elseif data.type == "inbook"
     checkRequiredFields("inbook", [data.authors; data.editors], data.title, data.in.chapter * data.in.pages, data.in.publisher, data.date.year)
-    # preprocess some fields
-    authors = formatAuthors(style, data.authors)
-    editors = formatAuthors(style, data.editors)
-    title = formatTitle(style, data.title)
-    return formatInbook(style, title, data.in.chapter, data.in.publisher, data.date.year; authors=authors, 
-      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series, type=data.type, 
+    return formatInbook(style, title, data.in.chapter, data.in.publisher, data.date.year; authors=authors,
+      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series,
       address=data.in.address, edition=data.in.edition, month=data.date.month, pages=data.in.pages, note=note)
   elseif data.type == "incollection"
     checkRequiredFields("incollection", data.authors, data.title, data.booktitle, data.in.publisher, data.date.year)
-    # preprocess some fields
-    authors = formatAuthors(style, data.authors)
-    editors = formatAuthors(style, data.editors)
-    title = formatTitle(style, data.title)
-    booktitle = formatTitle(style, data.booktitle)
-    return formatInCollection(style, authors, title, booktitle, data.in.publisher, data.date.year; 
-      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series, type=data.type, 
+    return formatInCollection(style, authors, title, booktitle, data.in.publisher, data.date.year;
+      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series,
       chapter=data.in.chapter, pages=data.in.pages, address=data.in.address, edition=data.in.edition, month=data.date.month, note=note)
+  elseif data.type == "manual"
+    checkRequiredFields("manual", data.title, data.date.year)
+    return formatManual(style, title, data.date.year;
+      authors=authors, organization=data.in.organization, address=data.in.address, edition=data.in.edition, month=data.date.month, note=note)
+  elseif data.type == "mastersthesis"
+    checkRequiredFields("mastersthesis", data.authors, data.title, data.in.school, data.date.year)
+    return formatMastersThesis(style, authors, title, data.in.school, data.date.year;
+      type=data.type, address=data.in.address, month=data.date.month, note=note)
+  elseif data.type == "misc"
+    return formatMisc(style, authors=authors, title=title, howpublished=data.access.howpublished;
+      month=data.date.month, year=data.date.year, note=note)
+  elseif data.type == "phdthesis"
+    checkRequiredFields("phdthesis", data.authors, data.title, data.in.school, data.date.year)
+    return formatPhDThesis(style, authors, title, data.in.school, data.date.year;
+      type=data.type, address=data.in.address, month=data.date.month, note=note)
+  elseif data.type == "proceedings"
+    checkRequiredFields("proceedings", data.title, data.date.year)
+    return formatProceedings(style, title, data.date.year;
+      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series, address=data.in.address, month=data.date.month, publisher=data.in.publisher, note=note)
+  elseif data.type == "techreport"
+    checkRequiredFields("techreport", data.authors, data.title, data.in.institution, data.date.year)
+    return formatTechreport(style, authors, title, data.in.institution, data.date.year;
+      type=data.type, number=data.in.number, address=data.in.address, month=data.date.month, note=note)
+  elseif data.type == "unpublished"
+    checkRequiredFields("unpublished", data.authors, data.title, note)
+    return formatUnpublished(style, authors, title, note;
+      howpublished=data.access.howpublished, month=data.date.month, year=data.date.year)
   else
     @warn "bibliography type '$(data.type)' not yet implemented"
     return ""
