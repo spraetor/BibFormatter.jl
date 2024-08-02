@@ -1,84 +1,128 @@
+using Logging
 import BibInternal
 
-abbreviateName(str::AbstractString) = str[1] * "."
-
-function formatAuthor(name::BibInternal.Name, style::BibliographyStyles.T)
-  firstNames = []
-  isempty(strip(name.first)) || push!(firstNames, abbreviateName(strip(name.first)))
-  isempty(strip(name.middle)) || push!(firstNames, abbreviateName(strip(name.middle)))
-  first = join(firstNames, " ")
-  if style in ( BibliographyStyles.abbrev, BibliographyStyles.alpha,
-                BibliographyStyles.ieeetr, BibliographyStyles.plain,
-                BibliographyStyles.siam, BibliographyStyles.unsrt )
-    return first * " " * name.last
-  elseif style in ( BibliographyStyles.acm, BibliographyStyles.apalike )
-    return name.last * ", " * first
-  end
-end
-
-authorDelimStyle(style::BibliographyStyles.T) = ","
-
-function formatAuthors(names::BibInternal.Names, style::BibliographyStyles.T)::String
-  delim = authorDelimStyle(style) * " "
-  lastDelim = (length(names) > 2 ? delim : " ") * "and "
-  join(map((n) -> formatAuthor(n,style), names), delim, lastDelim)
-end
 
 # Remove a trailing .
-function formatTitle(title::AbstractString, style::BibliographyStyles.T)::String
+function formatTitle(style::BibliographyStyle, title::AbstractString)::String
   chopsuffix(title,".")
 end
 
-function formatVolumeNumber(data::BibInternal.In, style::BibliographyStyles.T)::String
+function formatAuthorFirstLast(first, middle, last)::String
+  firstNames = []
+  pushNotEmpty!(firstNames, abbreviateName(strip(first)))
+  pushNotEmpty!(firstNames, abbreviateName(strip(middle)))
+  firstMiddle = join(firstNames, " ")
+  return firstMiddle * " " * last
+end
+
+function formatAuthorLastFirst(first, middle, last)::String
+  firstNames = []
+  pushNotEmpty!(firstNames, abbreviateName(strip(first)))
+  pushNotEmpty!(firstNames, abbreviateName(strip(middle)))
+  firstMiddle = join(firstNames, " ")
+  return last * ", " * firstMiddle
+end
+
+# default author formatting
+function formatAuthor(style::BibliographyStyle, first, middle, last)::String 
+  formatAuthorFirstLast(first,middle,last)
+end
+
+# default author delimiting symbol
+authorDelimStyle(style::BibliographyStyle) = ","
+
+# format a list of authors
+function formatAuthors(style::BibliographyStyle, names::BibInternal.Names)::String
+  delim = authorDelimStyle(style) * " "
+  lastDelim = (length(names) > 2 ? delim : " ") * "and "
+  join(map((n) -> formatAuthor(style,n.first,n.middle,n.last), names), delim, lastDelim)
+end
+
+function formatVolumeNumber(volume::AbstractString, number::AbstractString)::String
   str = []
-  isempty(data.volume) || push!(str, data.volume)
-  isempty(data.number) || push!(str, data.number)
+  pushNotEmpty!(str, volume)
+  pushNotEmpty!(str, number)
   return join(str, ", ")
 end
 
-function formatVolumeNumberPages(data::BibInternal.In, style::BibliographyStyles.T)::String
+function formatVolumeNumberPagesNamed(volume::AbstractString, number::AbstractString, pages::AbstractString)::String
   str = []
-  if style == BibliographyStyles.ieeetr
-    isempty(data.volume) || push!(str, "vol. " * data.volume)
-    isempty(data.number) || push!(str, "no. " * data.number)
-    isempty(data.pages)  || push!(str, "pp. " * data.pages)
-    return join(str, ", ")
-  else
-    volstr = ""
-    isempty(data.volume) || (volstr *= data.volume)
-    isempty(data.number) || (volstr *= "($(data.number))")
-    push!(str, volstr)
-    isempty(data.pages)  || push!(str, data.pages)
-    return join(str, ":")
-  end
+  pushNotEmpty!(str, joinNotEmpty("vol. ",volume))
+  pushNotEmpty!(str, joinNotEmpty("no. ",number))
+  pushNotEmpty!(str, joinNotEmpty("pp. ",pages))
+  return join(str, ", ")
 end
 
-function _format(data::BibInternal.Entry, style::BibliographyStyles.T)::String
+function formatVolumeNumberPagesCompact(volume::AbstractString, number::AbstractString, pages::AbstractString)::String
+  str = []
+  pushNotEmpty!(str, joinNotEmpty(volume,"(",number,")"))
+  pushNotEmpty!(str, pages)
+  return join(str, ":")
+end
+
+
+# default implementation of all bibtex entry types
+formatArticle(style::BibliographyStyle, authors, title, journal, year; volume="", number="", pages="", month="", note="") = "not implemented"
+formatBook(style::BibliographyStyle, title, publisher, year; authors="", editors="", volume="", number="", series="", address="", edition="", month="", note="") = "not implemented"
+formatBooklet(style::BibliographyStyle, title; authors="", howpublished="", address="", month="", year="", note="") = "not implemented"
+formatConference(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="", note="") = "not implemented"
+formatInBook(style::BibliographyStyle, title, chapter, publisher, year; authors="", editors="", volume="", number="", series="", type="", address="", edition="", month="", pages="", note="") = "not implemented"
+formatInCollection(style::BibliographyStyle, authors, title, booktitle, publisher, year; editors="", volume="", number="", series="", type="", chapter="", pages="", address="", edition="", month="", note="") = "not implemented"
+formatInProceedings(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="") = "not implemented"
+formatManual(style::BibliographyStyle, title, year; authors="", organization="", address="", edition="", month="", note="") = "not implemented"
+formatMastersThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = "not implemented"
+formatMisc(style::BibliographyStyle; authors="", title="", howpublished="", month="", year="", note="") = "not implemented"
+formatPhDThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = "not implemented"
+formatProceedings(style::BibliographyStyle, title, year; editors="", volume="", number="", series="", address="", month="", publisher="") = "not implemented"
+formatTechreport(style::BibliographyStyle, authors, title, institution, year; type="", number="", address="", month="", note="") = "not implemented"
+formatUnpublished(style::BibliographyStyle, authors, title, note; month="", year="") = "not implemented"
+
+
+function _format(style::BibliographyStyle, data::BibInternal.Entry)::String
+  note = get(data.fields,"note","")
   if data.type == "article"
-    _authors = formatAuthors(data.authors, style)
-    _title = formatTitle(data.title, style)
-    _vn = formatVolumeNumber(data.in,style)
-    _vnp = formatVolumeNumberPages(data.in,style)
-    if style == BibliographyStyles.abbrev
-      return "$(_authors). $(_title). $(data.in.journal), $(_vnp), $(data.date.year)."
-    elseif style == BibliographyStyles.acm
-      return "$(_authors) $(_title). $(data.in.journal) $(_vn) ($(data.date.year)), $(data.in.pages)."
-    elseif style == BibliographyStyles.alpha
-      return "$(_authors). $(_title). $(data.in.journal), $(_vnp), $(data.date.year)."
-    elseif style == BibliographyStyles.apalike
-      return "$(_authors) ($(data.date.year)). $(_title). $(data.in.journal), $(_vnp)."
-    elseif style == BibliographyStyles.ieeetr
-      return "$(_authors), ``$(_title),'' $(data.in.journal), $(_vnp), $(data.date.year)."
-    elseif style == BibliographyStyles.plain
-      return "$(_authors). $(_title). $(data.in.journal), $(_vnp), $(data.date.year)."
-    elseif style == BibliographyStyles.siam
-      return "$(_authors), $(_title), $(data.in.journal), $(data.in.volume) ($(data.date.year)), pp. $(data.in.pages)."
-    elseif style == BibliographyStyles.unsrt
-      return "$(_authors). $(_title). $(data.in.journal), $(_vnp), $(data.date.year)."
-    else
-      return "unknown"
-    end
+    checkRequiredFields("article", data.authors, data.title, data.in.journal, data.date.year)
+    # preprocess some fields
+    authors = formatAuthors(style, data.authors)
+    title = formatTitle(style, data.title)
+    return formatArticle(style, authors, title, data.in.journal, data.date.year; 
+      volume=data.in.volume, number=data.in.number, pages=data.in.pages, month=data.date.month, note=note)
+  elseif data.type == "book"
+    checkRequiredFields("book", [data.authors; data.editors], data.title, data.in.publisher, data.date.year)
+    # preprocess some fields
+    authors = formatAuthors(style, data.authors)
+    editors = formatAuthors(style, data.editors)
+    title = formatTitle(style, data.title)
+    return formatBook(style, title, data.in.publisher, data.date.year; authors=authors, editors=editors, 
+      volume=data.in.volume, number=data.in.number, series=data.in.series, address=data.in.address, edition=data.in.edition, month=data.date.month, note=note)
+  elseif data.type == "booklet"
+    checkRequiredFields("booklet", data.title)
+    # preprocess some fields
+    authors = formatAuthors(style, data.authors)
+    title = formatTitle(style, data.title)
+    return formatBooklet(style, title; authors=authors, howpublished=data.access.howpublished, 
+      address=data.in.address, month=data.date.month, year=data.date.year, note=note)
+  elseif data.type == "inbook"
+    checkRequiredFields("inbook", [data.authors; data.editors], data.title, data.in.chapter * data.in.pages, data.in.publisher, data.date.year)
+    # preprocess some fields
+    authors = formatAuthors(style, data.authors)
+    editors = formatAuthors(style, data.editors)
+    title = formatTitle(style, data.title)
+    return formatInbook(style, title, data.in.chapter, data.in.publisher, data.date.year; authors=authors, 
+      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series, type=data.type, 
+      address=data.in.address, edition=data.in.edition, month=data.date.month, pages=data.in.pages, note=note)
+  elseif data.type == "incollection"
+    checkRequiredFields("incollection", data.authors, data.title, data.booktitle, data.in.publisher, data.date.year)
+    # preprocess some fields
+    authors = formatAuthors(style, data.authors)
+    editors = formatAuthors(style, data.editors)
+    title = formatTitle(style, data.title)
+    booktitle = formatTitle(style, data.booktitle)
+    return formatInCollection(style, authors, title, booktitle, data.in.publisher, data.date.year; 
+      editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series, type=data.type, 
+      chapter=data.in.chapter, pages=data.in.pages, address=data.in.address, edition=data.in.edition, month=data.date.month, note=note)
   else
-    return "{$(data.type)}"
+    @warn "bibliography type '$(data.type)' not yet implemented"
+    return ""
   end
 end

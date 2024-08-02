@@ -7,6 +7,7 @@ version = "0.1.0"
 BibInternal = "2027ae74-3657-4b95-ae00-e2f7d55c3e64"
 BibParser = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
 EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [compat]
 BibParser = "0.2"
