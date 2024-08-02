@@ -1,9 +1,9 @@
 struct Unsrt <: BibliographyStyle end
 
-formatAuthor(style::Unsrt, first, middle, last)::String = formatAuthorFirstLast(first,middle,last)
+formatAuthor(style::Unsrt, von, last, junior, first, second)::String = formatAuthorFirstLast(von, last, junior, first, second)
 authorDelimStyle(style::Unsrt) = ","
 
-function formatArticle(style::Unsrt, authors, title, journal, year; volume="", number="", pages="", month="", note="") 
+function formatArticle(style::Unsrt, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesCompact(volume,number,pages)
   return "$authors. $title. $journal, $vnp, $year."
 end

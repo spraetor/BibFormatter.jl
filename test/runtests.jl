@@ -15,7 +15,7 @@ end
 
 
 # generte example outputs from bibtext
-if false
+if true
   outputDir = Filesystem.joinpath(@__DIR__,"output")
   Filesystem.mkpath(outputDir)
   for style in instances(BibliographyStyles.T)

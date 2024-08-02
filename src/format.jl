@@ -7,25 +7,30 @@ function formatTitle(style::BibliographyStyle, title::AbstractString)::String
   chopsuffix(title,".")
 end
 
-function formatAuthorFirstLast(first, middle, last)::String
-  firstNames = []
-  pushNotEmpty!(firstNames, abbreviateName(strip(first)))
-  pushNotEmpty!(firstNames, abbreviateName(strip(middle)))
-  firstMiddle = join(firstNames, " ")
-  return firstMiddle * " " * last
+function formatAuthorFirstLast(von, last, junior, first, second)::String
+  components = []
+  pushNotEmpty!(components, abbreviateName(strip(first)))
+  pushNotEmpty!(components, abbreviateName(strip(second)))
+  pushNotEmpty!(components, joinNotEmpty(von," ") * last * joinNotEmpty(", ",junior))
+  return join(components, " ")
 end
 
-function formatAuthorLastFirst(first, middle, last)::String
+function formatAuthorLastFirst(von, last, junior, first, second)::String
   firstNames = []
   pushNotEmpty!(firstNames, abbreviateName(strip(first)))
-  pushNotEmpty!(firstNames, abbreviateName(strip(middle)))
-  firstMiddle = join(firstNames, " ")
-  return last * ", " * firstMiddle
+  pushNotEmpty!(firstNames, abbreviateName(strip(second)))
+  _first = join(firstNames, " ")
+
+  components = []
+  pushNotEmpty!(components, joinNotEmpty(von," ") * last)
+  pushNotEmpty!(components, junior)
+  pushNotEmpty!(components, _first)
+  return join(components, ", ")
 end
 
 # default author formatting
-function formatAuthor(style::BibliographyStyle, first, middle, last)::String
-  formatAuthorFirstLast(first,middle,last)
+function formatAuthor(style::BibliographyStyle, von, last, junior, first, second)::String
+  formatAuthorFirstLast(von, last, junior, first, second)
 end
 
 # default author delimiting symbol
@@ -35,7 +40,7 @@ authorDelimStyle(style::BibliographyStyle) = ","
 function formatAuthors(style::BibliographyStyle, names::BibInternal.Names)::String
   delim = authorDelimStyle(style) * " "
   lastDelim = (length(names) > 2 ? delim : " ") * "and "
-  join(map((n) -> formatAuthor(style,n.first,n.middle,n.last), names), delim, lastDelim)
+  join(map((n) -> formatAuthor(style,n.particle,n.last,n.junior,n.first,n.middle), names), delim, lastDelim)
 end
 
 function formatVolumeNumber(volume::AbstractString, number::AbstractString)::String

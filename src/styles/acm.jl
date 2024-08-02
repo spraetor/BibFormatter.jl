@@ -1,9 +1,9 @@
 struct Acm <: BibliographyStyle end
 
-formatAuthor(style::Acm, first, middle, last)::String = formatAuthorLastFirst(first,middle,last)
+formatAuthor(style::Acm, von, last, junior, first, second)::String = formatAuthorLastFirst(von, last, junior, first, second)
 authorDelimStyle(style::Acm) = ","
 
-function formatArticle(style::Acm, authors, title, journal, year; volume="", number="", pages="", month="", note="") 
+function formatArticle(style::Acm, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vn = formatVolumeNumber(volume,number)
   return "$authors $title. $journal $vn ($year), $pages."
 end

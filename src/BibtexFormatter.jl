@@ -1,6 +1,6 @@
 module BibtexFormatter
 
-export bibliographyStyles
+export BibliographyStyles
 export format
 
 import BibInternal
@@ -58,11 +58,11 @@ include("styles/unsrt.jl")
 function BibliographyStyle(style::BibliographyStyles.T)
   if style == BibliographyStyles.abbrv
     return Abbrv()
-  elseif style == BibliographyStyles.acm 
+  elseif style == BibliographyStyles.acm
     return Acm()
-  elseif style == BibliographyStyles.alpha 
+  elseif style == BibliographyStyles.alpha
     return Alpha()
-  elseif style == BibliographyStyles.apalike 
+  elseif style == BibliographyStyles.apalike
     return Apalike()
   elseif style == BibliographyStyles.ieeetr
     return Ieeetr()
@@ -105,7 +105,6 @@ end
 # some utilities and default formatting
 include("utility.jl")
 include("format.jl")
-export format
 
 "Format a bibtext entry into a string using the given bibtext style"
 format(data::BibInternal.Entry, style::BibliographyStyles.T)::String = _format(BibliographyStyle(style), data)

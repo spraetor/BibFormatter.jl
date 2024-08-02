@@ -1,9 +1,9 @@
 struct Ieeetr <: BibliographyStyle end
 
-formatAuthor(style::Ieeetr, first, middle, last)::String = formatAuthorFirstLast(first,middle,last)
+formatAuthor(style::Ieeetr, von, last, junior, first, second)::String = formatAuthorFirstLast(von, last, junior, first, second)
 authorDelimStyle(style::Ieeetr) = ","
 
-function formatArticle(style::Ieeetr, authors, title, journal, year; volume="", number="", pages="", month="", note="") 
+function formatArticle(style::Ieeetr, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesNamed(volume,number,pages)
   return "$authors, ``$title,'' $journal, $vnp, $year."
 end
