@@ -1,47 +1,12 @@
 module BibtexFormatter
 
-export BibliographyStyles
 export format
 
 import BibInternal
-using EnumX
 
-@enumx BibliographyStyles begin
-  abbrv     # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
-            # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
-            # 1975.
-
-  acm       # \textsc{Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C.} Cubature formulas of degree nine
-            # for symmetric planar regions. \emph{Mathematics of Computation 29}, 131 (1975),
-            # 810-815.
-
-  alpha     # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree
-            # nine for symmetric planar regions. \emph{Mathematics of Computation},
-            # 29(131):810-815, 1975.
-
-  apalike   # Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C. (1975). Cubature formulas of degree
-            # nine for symmetric planar regions. \emph{Mathematics of Computation},
-            # 29(131):810-815.
-
-  ieeetr    # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher, ``Cubature formulas of degree nine for
-            # symmetric planar regions,'' \emph{Mathematics of Computation}, vol. 29, no. 131,
-            # pp. 810-815, 1975.
-
-  plain     # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
-            # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
-            # 1975.
-
-  siam      # \textsc{P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher}, \emph{Cubature formulas of degree nine
-            # for symmetric planar regions}, Mathematics of Computation, 29 (1975),
-            # pp. 810-815.
-
-  unsrt     # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
-            # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
-            # 1975.
-end
 
 abstract type BibliographyStyle end
-
+abstract type OutputFormat end
 
 # include the implementation of several formats
 include("styles/abbrv.jl")
@@ -54,51 +19,67 @@ include("styles/siam.jl")
 include("styles/unsrt.jl")
 
 
-# convert an enum of bibliography styles into the style type
-function BibliographyStyle(style::BibliographyStyles.T)
-  if style == BibliographyStyles.abbrv
-    return Abbrv()
-  elseif style == BibliographyStyles.acm
-    return Acm()
-  elseif style == BibliographyStyles.alpha
-    return Alpha()
-  elseif style == BibliographyStyles.apalike
-    return Apalike()
-  elseif style == BibliographyStyles.ieeetr
-    return Ieeetr()
-  elseif style == BibliographyStyles.plain
-    return Plain()
-  elseif style == BibliographyStyles.siam
-    return Siam()
-  elseif style == BibliographyStyles.unsrt
-    return Unsrt()
-  else
-    throw(ArgumentError("Unknown bibtex style '$style'"))
-  end
+const styles = Dict(
+  :abbrv => Abbrv(),   
+      # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
+      # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
+      # 1975.
+
+  :acm => Acm(),
+      # \textsc{Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C.} Cubature formulas of degree nine
+      # for symmetric planar regions. \emph{Mathematics of Computation 29}, 131 (1975),
+      # 810-815.
+
+  :alpha => Alpha(),
+      # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree
+      # nine for symmetric planar regions. \emph{Mathematics of Computation},
+      # 29(131):810-815, 1975.
+
+  :apalike => Apalike(),
+      # Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C. (1975). Cubature formulas of degree
+      # nine for symmetric planar regions. \emph{Mathematics of Computation},
+      # 29(131):810-815.
+
+  :ieeetr => Ieeetr(),
+      # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher, ``Cubature formulas of degree nine for
+      # symmetric planar regions,'' \emph{Mathematics of Computation}, vol. 29, no. 131,
+      # pp. 810-815, 1975.
+
+  :plain => Plain(),
+      # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
+      # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
+      # 1975.
+
+  :siam => Siam(),
+      # \textsc{P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher}, \emph{Cubature formulas of degree nine
+      # for symmetric planar regions}, Mathematics of Computation, 29 (1975),
+      # pp. 810-815.
+
+  :unsrt => Unsrt(),
+      # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
+      # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
+      # 1975.
+)
+
+# convert an symbol of bibliography styles into the style type
+function BibliographyStyle(style::Symbol)
+  return styles[style]
 end
 
 
-# convert an string of bibliography styles into the style type
-function BibliographyStyle(style::AbstractString)
-  if style == "abbrv"
-    return Abbrv()
-  elseif style == "acm"
-    return Acm()
-  elseif style == "alpha"
-    return Alpha()
-  elseif style == "apalike"
-    return Apalike()
-  elseif style == "ieeetr"
-    return Ieeetr()
-  elseif style == "plain"
-    return Plain()
-  elseif style == "siam"
-    return Siam()
-  elseif style == "unsrt"
-    return Unsrt()
-  else
-    throw(ArgumentError("Unknown bibtex style '$style'"))
-  end
+include("formats/text.jl")
+include("formats/html.jl")
+include("formats/latex.jl")
+
+const formats = Dict(
+  :text => OutputFormatText(),
+  :html => OutputFormatHtml(),
+  :latex => OutputFormatLatex(),
+)
+
+# convert an symbol of output formats into the format type
+function OutputFormat(fmt::Symbol)
+  return formats[fmt]
 end
 
 
@@ -107,9 +88,8 @@ include("utility.jl")
 include("format.jl")
 
 "Format a bibtext entry into a string using the given bibtext style"
-format(data::BibInternal.Entry, style::BibliographyStyles.T)::String = _format(BibliographyStyle(style), data)
-
-"Format a bibtext entry into a string using the given bibtext style"
-format(data::BibInternal.Entry, style::AbstractString="plain")::String = _format(BibliographyStyle(style), data)
+function format(data::BibInternal.Entry, style::Symbol = :plain, fmt::Symbol = :latex)::String 
+  _format(OutputFormat(fmt), BibliographyStyle(style), data)
+end
 
 end # module BibtexFormatter

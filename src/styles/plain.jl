@@ -1,7 +1,6 @@
 struct Plain <: BibliographyStyle end
 
-formatAuthor(style::Plain, von, last, junior, first, second)::String = formatAuthorFirstLast(von, last, junior, first, second)
-authorDelimStyle(style::Plain) = ","
+formatAuthor(fmt::OutputFormat, style::Plain, von, last, junior, first, second)::String = formatAuthorFirstLast(fmt, von, last, junior, first, second)
 
 function formatArticle(style::Plain, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesCompact(volume,number,pages)

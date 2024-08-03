@@ -1,7 +1,6 @@
 struct Alpha <: BibliographyStyle end
 
-formatAuthor(style::Alpha, von, last, junior, first, second)::String = formatAuthorFirstLast(von, last, junior, first, second)
-authorDelimStyle(style::Alpha) = ","
+formatAuthor(fmt::OutputFormat, style::Alpha, von, last, junior, first, second)::String = formatAuthorFirstLast(fmt, von, last, junior, first, second)
 
 function formatArticle(style::Alpha, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesCompact(volume,number,pages)

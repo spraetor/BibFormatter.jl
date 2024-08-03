@@ -1,7 +1,6 @@
 struct Apalike <: BibliographyStyle end
 
-formatAuthor(style::Apalike, von, last, junior, first, second)::String = formatAuthorLastF(von, last, junior, first, second)
-authorDelimStyle(style::Apalike) = ","
+formatAuthor(fmt::OutputFormat, style::Apalike, von, last, junior, first, second)::String = formatAuthorLastF(fmt, von, last, junior, first, second)
 
 function formatArticle(style::Apalike, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesCompact(volume,number,pages)

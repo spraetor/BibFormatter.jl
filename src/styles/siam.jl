@@ -1,7 +1,6 @@
 struct Siam <: BibliographyStyle end
 
-formatAuthor(style::Siam, von, last, junior, first, second)::String = formatAuthorFLast(von, last, junior, first, second)
-authorDelimStyle(style::Siam) = ","
+formatAuthor(fmt::OutputFormat, style::Siam, von, last, junior, first, second)::String = formatAuthorFLast(fmt, von, last, junior, first, second)
 
 function formatArticle(style::Siam, authors, title, journal, year; volume="", number="", pages="", month="", note="")
   vnp = formatVolumeNumberPagesCompact(volume,number,pages)
