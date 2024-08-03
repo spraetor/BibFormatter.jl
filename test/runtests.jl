@@ -6,8 +6,8 @@ import BibParser
 
 const bibFilename = Filesystem.joinpath(@__DIR__,"references.bib")
 const bibFile = BibParser.parse_file(bibFilename)
-const fmt = :text
-for style in (:ieeetr,) # styles
+const fmt = :html
+for style in (:acm,) # styles
   println(style)
   for (key,entry) in bibFile
     println(outputEntry(OutputFormat(fmt), key, format(entry, style, fmt)))
