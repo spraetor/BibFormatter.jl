@@ -8,7 +8,7 @@ import BibInternal
 abstract type BibliographyStyle end
 abstract type OutputFormat end
 
-# include the implementation of several formats
+# include the implementation of several bibtex styles
 include("styles/abbrv.jl")
 include("styles/acm.jl")
 include("styles/alpha.jl")
@@ -67,6 +67,7 @@ function BibliographyStyle(style::Symbol)
 end
 
 
+# include the implementation of several output formats
 include("formats/text.jl")
 include("formats/html.jl")
 include("formats/latex.jl")
@@ -88,7 +89,7 @@ include("utility.jl")
 include("format.jl")
 
 "Format a bibtext entry into a string using the given bibtext style"
-function format(data::BibInternal.Entry, style::Symbol = :plain, fmt::Symbol = :latex)::String 
+function format(data::BibInternal.Entry, style::Symbol = :abbrv, fmt::Symbol = :text)::String 
   _format(OutputFormat(fmt), BibliographyStyle(style), data)
 end
 
