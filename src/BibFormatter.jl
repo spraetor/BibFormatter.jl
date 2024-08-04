@@ -1,4 +1,4 @@
-module BibtexFormatter
+module BibFormatter
 
 export format
 
@@ -92,4 +92,4 @@ function format(data::BibInternal.Entry, style::Symbol = :plain, fmt::Symbol = :
   _format(OutputFormat(fmt), BibliographyStyle(style), data)
 end
 
-end # module BibtexFormatter
+end # module BibFormatter

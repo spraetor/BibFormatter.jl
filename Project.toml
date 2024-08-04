@@ -1,4 +1,4 @@
-name = "BibtexFormatter"
+name = "BibFormatter"
 uuid = "4e8691f6-bd88-4c22-a28c-d5957cb74d98"
 authors = ["Simon Praetorius <simon.praetorius@tu-dresden.de>"]
 version = "0.1.0"

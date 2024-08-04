@@ -1,4 +1,4 @@
-using BibtexFormatter: styles,format,outputEntry,OutputFormat
+using BibFormatter: styles,format,outputEntry,OutputFormat
 using Test
 
 import Base.Filesystem
