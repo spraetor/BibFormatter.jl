@@ -22,7 +22,7 @@ function formatArticle(fmt::OutputFormat, style::Ieeetr, authors, title, journal
 
     let sublist = []
       push!(sublist, outputQuote(fmt,title * ","))
-      push!(sublist, emphFieldJournal(fmt,journal))
+      push!(sublist, outputEmph(fmt,journal))
       push!(list, join(sublist, " "))
     end
     
@@ -52,9 +52,9 @@ function formatBook(fmt::OutputFormat, style::Ieeetr, title, publisher, year; au
       push!(list, formatEditors(style,editors))
     end
 
-    push!(list, emphFieldTitle(fmt,title))
+    push!(list, outputEmph(fmt,title))
     if !isempty(volume) && !isempty(series)
-      push!(list, formatVolume(fmt,style,volume) * " of " * emphFieldSeries(fmt,series))
+      push!(list, formatVolume(fmt,style,volume) * " of " * outputEmph(fmt,series))
     end
     push!(blocks, join(list, ", "))
   end
@@ -111,9 +111,9 @@ function formatInbook(fmt::OutputFormat, style::Ieeetr, title, chapter, publishe
       push!(list, formatEditors(style,editors))
     end
 
-    push!(list, emphFieldTitle(fmt,title))
+    push!(list, outputEmph(fmt,title))
     if !isempty(volume) && !isempty(series)
-      push!(list, formatVolume(fmt,style,volume) * " of " * emphFieldSeries(fmt,series))
+      push!(list, formatVolume(fmt,style,volume) * " of " * outputEmph(fmt,series))
     end
     pushNotEmpty!(list, formatChapter(style,chapter,type))
     pushNotEmpty!(list, formatPages(fmt,style,pages))
@@ -150,13 +150,13 @@ function formatInCollection(fmt::OutputFormat, style::Ieeetr, authors, title, bo
 
     let sublist = []
       push!(sublist, outputQuote(fmt,title * ","))
-      push!(sublist, "in " * emphFieldTitle(fmt,booktitle))
+      push!(sublist, "in " * outputEmph(fmt,booktitle))
       pushNotEmpty!(sublist, joinNotEmpty("(",formatEditors(style,editors),")"))
       push!(list, join(sublist, " "))
     end
     
     if !isempty(volume) && !isempty(series)
-      push!(list, formatVolume(fmt,style,volume) * " of " * emphFieldSeries(fmt,series))
+      push!(list, formatVolume(fmt,style,volume) * " of " * outputEmph(fmt,series))
     elseif !isempty(number) && !isempty(series)
       push!(list, formatNumber(fmt,style,volume) * " in " * series)
     end
@@ -186,7 +186,7 @@ function formatManual(fmt::OutputFormat, style::Ieeetr, title, year; authors="",
   blocks = []
   let list = []
     pushNotEmpty!(list,authors)
-    push!(list, emphFieldTitle(fmt,title))
+    push!(list, outputEmph(fmt,title))
     push!(blocks, join(list, ", "))
   end
 
@@ -255,7 +255,7 @@ function formatPhDThesis(fmt::OutputFormat, style::Ieeetr, author, title, school
   blocks = []
   let list = []
     push!(list, author)
-    push!(list, emphFieldTitle(fmt,title))
+    push!(list, outputEmph(fmt,title))
     push!(blocks, join(list, ", "))
   end
 
@@ -278,9 +278,9 @@ function formatProceedings(fmt::OutputFormat, style::Ieeetr, title, year; editor
 
   let list = []
     pushNotEmpty!(blocks, editors)
-    push!(list, emphFieldTitle(fmt,title))
+    push!(list, outputEmph(fmt,title))
     if !isempty(volume) && !isempty(series)
-      push!(list, formatVolume(fmt,style,volume) * " of " * emphFieldSeries(fmt,series))
+      push!(list, formatVolume(fmt,style,volume) * " of " * outputEmph(fmt,series))
     elseif !isempty(number) && !isempty(series)
       push!(list, formatNumber(fmt,style,volume) * " in " * series)
     end

@@ -1,5 +1,4 @@
 using Logging
-import BibInternal
 
 pushNotEmpty!(a::AbstractArray{S,1}, s::AbstractString) where {S} = isempty(s) || push!(a,s)
 

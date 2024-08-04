@@ -128,11 +128,6 @@ formatTechreport(style::BibliographyStyle, authors, title, institution, year; ty
 formatUnpublished(style::BibliographyStyle, authors, title, note; howpublished="", month="", year="") = nothing
 
 
-# Emphasize some field
-emphFieldTitle(fmt::OutputFormat, title::AbstractString) = title
-emphFieldSeries(fmt::OutputFormat, series::AbstractString) = series
-emphFieldJournal(fmt::OutputFormat, journal::AbstractString) = journal
-
 outputEmph(fmt::OutputFormat, str::AbstractString) = str
 outputSmallCaps(fmt::OutputFormat, str::AbstractString) = str
 outputQuote(fmt::OutputFormat, str::AbstractString) = "\"$str\""
@@ -140,7 +135,6 @@ outputJoinSpace(fmt::OutputFormat, list::AbstractVector{S}) where S = join(list,
 outputNumberRange(fmt::OutputFormat, pair::AbstractVector{S}) where {S<:AbstractString} = join(pair, "-")
 outputBlocks(fmt::OutputFormat, blocks::Nothing) = "Not implemented"
 outputBlocks(fmt::OutputFormat, blocks::AbstractVector{S}) where S = join(blocks, " ")
-outputEntry(fmt::OutputFormat, key::AbstractString, entry::AbstractString) = "[$key] " * entry
 
 
 function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry)::String
