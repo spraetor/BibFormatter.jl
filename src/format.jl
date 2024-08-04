@@ -98,8 +98,17 @@ function formatVolumeNumberPagesCompact(volume::AbstractString, number::Abstract
   return join(str, ":")
 end
 
+function formatBlock(style::BibliographyStyle, block::AbstractString)
+  out = uppercasefirst(strip(block))
+  if endswith(out, ".") || endswith(out,".}") || endswith(out,">") # TODO: not a proper detection of all output formats
+    return out
+  else
+    return out * "."
+  end
+end
+
 function formatBlocks(style::BibliographyStyle, blocks::AbstractVector{S}) where S
-  map((s) -> uppercasefirst(strip(s)) * ".", blocks)
+  map((b) -> formatBlock(style,b), blocks)
 end
 
 # default implementation of all bibtex entry types
@@ -124,6 +133,8 @@ emphFieldTitle(fmt::OutputFormat, title::AbstractString) = title
 emphFieldSeries(fmt::OutputFormat, series::AbstractString) = series
 emphFieldJournal(fmt::OutputFormat, journal::AbstractString) = journal
 
+outputEmph(fmt::OutputFormat, str::AbstractString) = str
+outputSmallCaps(fmt::OutputFormat, str::AbstractString) = str
 outputQuote(fmt::OutputFormat, str::AbstractString) = "\"$str\""
 outputJoinSpace(fmt::OutputFormat, list::AbstractVector{S}) where S = join(list, " ")
 outputNumberRange(fmt::OutputFormat, pair::AbstractVector{S}) where {S<:AbstractString} = join(pair, "-")
