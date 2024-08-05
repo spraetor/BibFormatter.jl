@@ -98,43 +98,26 @@ function formatVolumeNumberPagesCompact(volume::AbstractString, number::Abstract
   return join(str, ":")
 end
 
-function formatBlock(style::BibliographyStyle, block::AbstractString)
-  out = uppercasefirst(strip(block))
-  if endswith(out, ".") || endswith(out,".}") || endswith(out,">") # TODO: not a proper detection of all output formats
-    return out
-  else
-    return out * "."
-  end
-end
+formatBlock(fmt::OutputFormat, block::AbstractString) = outputAddPeriod(fmt, uppercasefirst(strip(block)))
+formatBlocks(fmt::OutputFormat, style::BibliographyStyle, blocks::Nothing) = "Not implemented"
+formatBlocks(fmt::OutputFormat, style::BibliographyStyle, blocks::AbstractVector{S}) where S = outputBlocks(fmt, map((b) -> formatBlock(fmt,b), blocks))
 
-function formatBlocks(style::BibliographyStyle, blocks::AbstractVector{S}) where S
-  map((b) -> formatBlock(style,b), blocks)
-end
 
 # default implementation of all bibtex entry types
-formatArticle(style::BibliographyStyle, authors, title, journal, year; volume="", number="", pages="", month="", note="") = nothing
-formatBook(style::BibliographyStyle, title, publisher, year; authors="", editors="", volume="", number="", series="", address="", edition="", month="", note="") = nothing
-formatBooklet(style::BibliographyStyle, title; authors="", howpublished="", address="", month="", year="", note="") = nothing
-#formatConference(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="", note="") = nothing
-formatInBook(style::BibliographyStyle, title, chapter, publisher, year; authors="", editors="", volume="", number="", series="", type="", address="", edition="", month="", pages="", note="") = nothing
-formatInCollection(style::BibliographyStyle, authors, title, booktitle, publisher, year; editors="", volume="", number="", series="", type="", chapter="", pages="", address="", edition="", month="", note="") = nothing
-#formatInProceedings(style::BibliographyStyle, authors, title, booktitle, year; editors="", volume="", number="", series="", pages="", address="", month="", organization="", publisher="") = nothing
-formatManual(style::BibliographyStyle, title, year; authors="", organization="", address="", edition="", month="", note="") = nothing
-formatMastersThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = nothing
-formatMisc(style::BibliographyStyle; authors="", title="", howpublished="", month="", year="", note="") = nothing
-formatPhDThesis(style::BibliographyStyle, author, title, school, year; type="", address="", month="", note="") = nothing
-formatProceedings(style::BibliographyStyle, title, year; editors="", volume="", number="", series="", organization="", address="", month="", publisher="", note="") = nothing
-formatTechreport(style::BibliographyStyle, authors, title, institution, year; type="", number="", address="", month="", note="") = nothing
-formatUnpublished(style::BibliographyStyle, authors, title, note; howpublished="", month="", year="") = nothing
-
-
-outputEmph(fmt::OutputFormat, str::AbstractString) = str
-outputSmallCaps(fmt::OutputFormat, str::AbstractString) = str
-outputQuote(fmt::OutputFormat, str::AbstractString) = "\"$str\""
-outputJoinSpace(fmt::OutputFormat, list::AbstractVector{S}) where S = join(list, " ")
-outputNumberRange(fmt::OutputFormat, pair::AbstractVector{S}) where {S<:AbstractString} = join(pair, "-")
-outputBlocks(fmt::OutputFormat, blocks::Nothing) = "Not implemented"
-outputBlocks(fmt::OutputFormat, blocks::AbstractVector{S}) where S = join(blocks, " ")
+formatArticle(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatBook(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatBooklet(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+#formatConference(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatInBook(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatInCollection(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+#formatInProceedings(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatManual(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatMastersThesis(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatMisc(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatPhDThesis(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatProceedings(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatTechreport(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatUnpublished(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
 
 
 function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry)::String
@@ -198,5 +181,40 @@ function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.
     @warn "bibliography type '$(data.type)' not yet implemented"
   end
 
-  return outputBlocks(fmt, formatBlocks(style, blocks))
+  return formatBlocks(fmt, style, blocks)
+end
+
+
+
+function _format2(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry)::String
+  blocks = if data.type == "article"
+    formatArticle(fmt, style, data)
+  elseif data.type == "book"
+    formatBook(fmt, style, data)
+  elseif data.type == "booklet"
+    formatBooklet(fmt, style, data)
+  elseif data.type == "inbook"
+    formatInBook(fmt, style, data)
+  elseif data.type == "incollection"
+    formatInCollection(fmt, style, data)
+  elseif data.type == "manual"
+    formatManual(fmt, style, data)
+  elseif data.type == "mastersthesis"
+    formatMastersThesis(fmt, style, data)
+  elseif data.type == "misc"
+    formatMisc(fmt, style, data)
+  elseif data.type == "phdthesis"
+    formatPhDThesis(fmt, style, data)
+  elseif data.type == "proceedings"
+    formatProceedings(fmt, style, data)
+  elseif data.type == "techreport"
+    formatTechreport(fmt, style, data)
+  elseif data.type == "unpublished"
+    formatUnpublished(fmt, style, data)
+  else
+    @warn "bibliography type '$(data.type)' not yet implemented"
+    nothing
+  end
+
+  formatBlocks(fmt, style, blocks)
 end

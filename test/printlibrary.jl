@@ -1,4 +1,4 @@
-using BibFormatter: BibliographyStyle,OutputFormat,OutputFormatHtml,OutputFormatLatex,_format
+using BibFormatter: BibliographyStyle,OutputFormat,OutputFormatHtml,OutputFormatLatex,_format2
 using Test
 
 import Base.Filesystem
@@ -7,7 +7,7 @@ import BibParser
 function printLibrary(out::IO, fmt::OutputFormat, style::BibliographyStyle, entries::AbstractDict{String,E}) where E
   println(out, outputLibraryHeader(fmt))
   for (key,entry) in entries
-    println(out, outputEntry(fmt, key, _format(fmt,style,entry)))
+    println(out, outputEntry(fmt, key, _format2(fmt,style,entry)))
   end
   println(out, outputLibraryFooter(fmt))
 end
@@ -53,7 +53,7 @@ $entry
 const bibFilename = Filesystem.joinpath(@__DIR__,"references.bib")
 const bibFile = BibParser.parse_file(bibFilename)
 
-outFilename = Filesystem.joinpath(outputDir,"bibliography_acm.tex")
+outFilename = Filesystem.joinpath(outputDir,"bibliography_siam.tex")
 open(outFilename,"w") do outFile
-  printLibrary(outFile, OutputFormat(:latex), BibliographyStyle(:acm), bibFile)
+  printLibrary(outFile, OutputFormat(:latex), BibliographyStyle(:siam), bibFile)
 end

@@ -3,19 +3,22 @@ struct Siam <: BibliographyStyle end
 
 module BibliographyStyleSiam
 
+using ...BibFormatter: OutputFormat, outputEmph, outputSmallCaps, outputNumberRange, outputJoinSpace, formatAuthorFLast
 import BibInternal
 
-empty(str::AbstractString)::Bool = isempty(str)
-empty(arr::AbstractVector{T})::Bool where T = length(arr) > 0
-fieldOrNull(field)::String = empty(field) ? "" : field
+empty(str::AbstractString) = isempty(str)
+empty(arr::AbstractVector{T}) where T = length(arr) == 0
+empty(data::BibInternal.Entry, key::Symbol) = !hasproperty(data,key) || empty(getproperty(data,key)::String)
+fieldOrNull(field) = empty(field) ? "" : field
 
 emphasize(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputEmph(fmt, str)
 scapify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputSmallCaps(fmt, str)
-dashify(fmt::OutputFormat, str::AbstractString)::String = empty(str) ? "" : outputNumberRange(fmt,split(str,'-'))
-tieConnect(fmt::OutputFormat, arr::AbstractVector{T})::String where T = outputJoinSpace(fmt,arr)
-tieOrSpaceConnect(fmt::OutputFormat, arr::AbstractVector{T})::String where T = length(arr[end]) > 3 ? tieConnect(fmt,arr) : join(arr," ")
+dashify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputNumberRange(fmt,split(str,'-'))
+tieConnect(fmt::OutputFormat, arr::AbstractVector{T}) where T = outputJoinSpace(fmt,arr)
+tieOrSpaceConnect(fmt::OutputFormat, arr::AbstractVector{T}) where T = length(arr[end]) > 3 ? tieConnect(fmt,arr) : join(arr," ")
 
-function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::AbstractString)
+
+function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::AbstractString) where T
   if empty(str)
     @warn msg
   else
@@ -23,11 +26,11 @@ function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::Abstract
   end
 end
 
-function output!(arr::AbstractVector{T}, str::AbstractString)
+function output!(arr::AbstractVector{T}, str::AbstractString) where T
   !empty(str) && push!(arr, str)
 end
 
-function outputNotNull!(arr::AbstractVector{T}, str::AbstractString)
+function outputNotNull!(arr::AbstractVector{T}, str::AbstractString) where T
   @assert !empty(str)
   push!(arr, str)
 end
@@ -36,7 +39,7 @@ end
 function formatNames(fmt::OutputFormat, names::BibInternal.Names)::String
   out = ""
   numnames = length(names)
-  for (i,n) in numerate(names)
+  for (i,n) in enumerate(names)
     t = formatAuthorFLast(fmt, n.particle,n.last,n.junior,n.first,n.middle) # {f.~}{vv~}{ll}{, jj}
     if i > 1
       if numnames-i > 0     # namesleft > 1
@@ -60,6 +63,9 @@ end
 
 "Format author names in small caps"
 function formatAuthors(fmt::OutputFormat, names::BibInternal.Names)::String
+  if empty(names)
+    @warn "Names are empty: $(names)"
+  end
   empty(names) ? "" : scapify(fmt,formatNames(fmt,names))
 end
 
@@ -143,36 +149,37 @@ end
 
 "Format pages as 'pp.~1--2' or 'p.~1."
 function formatPages(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.in.pages) ?
-    "" :
-    length(split(data.in.pages,r"[-,]")) > 1 ?
+  if empty(data.in.pages)
+    return ""
+  else
+    return length(split(data.in.pages,r"[-,]")) > 1 ?
       tieConnect(fmt,["pp.",dashify(fmt,data.in.pages)]) :
       tieConnect(fmt,["p.",data.in.pages])
+  end
 end
 
 "Format as 'volume (year)'."
 function formatVolYear(fmt::OutputFormat, data::BibInternal.Entry)::String
   out = data.in.volume
-  if empty(year)
-    @warn "Empty year in $(data.id)."
+  if empty(data.date.year)
+    @warn "Empty 'year' in $(data.id)."
   else
     out *= " ($(data.date.year))"
   end
   out
 end
 
+"Format chaper and pages as 'ch.~chapter, pp.~1--2'."
 function formatChapterPages(fmt::OutputFormat, data::BibInternal.Entry)::String
   if empty(data.in.chapter)
     return formatPages(fmt,data)
   else
-    out = ""
-    if empty(data.type)
-      out = tieConnect(fmt,["ch.",chapter])
-    else
-      out = tieOrSpaceConnect(fmt,[lowercase(data.in.chapter),chapter])
-      if !empty(data.in.pages)
-        out *= ", " * formatPages(fmt,data)
-      end
+    out = empty(data,:type) ?
+      tieConnect(fmt,["ch.",chapter]) :
+      tieOrSpaceConnect(fmt,[lowercase(data.type),chapter])
+
+    if !empty(data.in.pages)
+      out *= ", " * formatPages(fmt,data)
     end
     return out
   end
@@ -183,11 +190,9 @@ function formatInEdBooktitle(fmt::OutputFormat, data::BibInternal.Entry)::String
   if empty(data.booktitle)
     return ""
   else
-    if empty(data.editors)
-      return "in " * data.booktitle
-    else
-      return "in " * data.booktitle * ", " * formatInEditors(fmt,data)
-    end
+    return empty(data.editors) ?
+      "in " * data.booktitle :
+      "in " * data.booktitle * ", " * formatInEditors(fmt,data)
   end
 end
 
@@ -204,24 +209,24 @@ end
 
 "Transform the thesis type into lowercase if set."
 function formatThesisType(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.type) ? "" : lowercase(data.type)
+  empty(data,:type) ? "" : lowercase(data.type)
 end
 
 "Format the tech report number as 'Tech. Rep.~number' or 'type~number'"
 function formatTrNumber(fmt::OutputFormat, data::BibInternal.Entry)::String
-  out = empty(data.type) ? "Tech. Rep." : data.type
+  out = empty(data,:type) ? "Tech. Rep." : data.type
   empty(data.in.number) ? lowercase(out) : tieOrSpaceConnect(out,data.in.number)
 end
 
 # TODO: crossref not implemented
 
-function article(fmt::OutputFormat, data::BibInternal.Entry)::String
+function article(fmt::OutputFormat, data::BibInternal.Entry)
   blocks = []
 
   output!(blocks, let list = []
     outputCheck!(list, formatAuthors(fmt,data.authors), "Empty 'author' in $(data.id).")
     outputCheck!(list, formatTitle(fmt,data.title), "Empty 'title' in $(data.id).")
-    outputCheck!(list, journal, "Empty 'journal' in $(data.id).")
+    outputCheck!(list, data.in.journal, "Empty 'journal' in $(data.id).")
     output!(list, formatVolYear(fmt,data))
     output!(list, formatPages(fmt,data))
 
@@ -232,7 +237,7 @@ function article(fmt::OutputFormat, data::BibInternal.Entry)::String
   blocks
 end
 
-function book(fmt::OutputFormat, data::BibInternal.Entry)::String
+function book(fmt::OutputFormat, data::BibInternal.Entry)
   blocks = []
 
   output!(blocks, let list = []
@@ -279,62 +284,62 @@ end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, ``Title.'' How it is published, Address, mm yyyy.
 # This is a note.
-function formatBooklet(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.booklet(fmt, data)
-end
+#function formatBooklet(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.booklet(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, {\em This is a title}, vol.~v123 of {\em Series}, type Chapter, pp.~1--2.
 # Address: Publisher, edition~ed., mm yyyy.
 # This is a note.
-function formatInbook(fmt::OutputFormat, data::BibInternal.Entry)
-  BibliographyStyleSiam.inbook(fmt, data)
-end
+#function formatInBook(fmt::OutputFormat, data::BibInternal.Entry)
+#  BibliographyStyleSiam.inbook(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, ``Title,'' in {\em Booktitle} (E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3, eds.), vol.~v123 of {\em Series}, type Chapter, pp.~1--2, Address: Publisher, edition~ed., mm yyyy.
 # This is a note.
-function formatInCollection(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.incollection(fmt, data)
-end
+#function formatInCollection(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.incollection(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, {\em Title}.
 # Organization, Address, edition~ed., mm yyyy.
 # This is a note.
-function formatManual(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.manual(fmt, data)
-end
+#function formatManual(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.manual(fmt, data)
+#end
 
 # F.~M. Last, ``Title,'' type, School, Address, mm yyyy.
 # This is a note.
-function formatMastersThesis(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.mastersthesis(fmt, data)
-end
+#function formatMastersThesis(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.mastersthesis(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, ``Title.'' How it is published, mm yyyy.
 # This is a note.
-function formatMisc(fmt::OutputFormat, style::Siam; data::BibInternal.Entry)
-  BibliographyStyleSiam.misc(fmt, data)
-end
+#function formatMisc(fmt::OutputFormat, style::Siam; data::BibInternal.Entry)
+#  BibliographyStyleSiam.misc(fmt, data)
+#end
 
 # F.~M. Last, {\em Title}.
 # Type, School, Address, mm yyyy.
 # This is a note.
-function formatPhDThesis(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.phdthesis(fmt, data)
-end
+#function formatPhDThesis(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.phdthesis(fmt, data)
+#end
 
 # E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3, eds., {\em Title}, vol.~v123 of {\em Series}, (Address), Organization, Publisher, mm yyyy.
 # This is a note.
-function formatProceedings(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.proceedings(fmt, data)
-end
+#function formatProceedings(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.proceedings(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, ``Title,'' Type n234, Institution, Address, mm yyyy.
 # This is a note.
-function formatTechreport(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.techreport(fmt, data)
-end
+#function formatTechreport(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.techreport(fmt, data)
+#end
 
 # F.~M. Last1, F.~M. Last2, and F.~M. Last3, ``Title.'' This is a note, mm yyyy.
-function formatUnpublished(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
-  BibliographyStyleSiam.pubpublished(fmt, data)
-end
+#function formatUnpublished(fmt::OutputFormat, style::Siam, data::BibInternal.Entry)
+#  BibliographyStyleSiam.pubpublished(fmt, data)
+#end

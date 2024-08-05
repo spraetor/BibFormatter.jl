@@ -4,9 +4,14 @@ export format
 
 import BibInternal
 
-
 abstract type BibliographyStyle end
 abstract type OutputFormat end
+
+# some utilities and default formatting
+include("utility.jl")
+include("output.jl")
+include("format.jl")
+
 
 # include the implementation of several bibtex styles
 include("styles/abbrv.jl")
@@ -15,12 +20,12 @@ include("styles/alpha.jl")
 include("styles/apalike.jl")
 include("styles/ieeetr.jl")
 include("styles/plain.jl")
-include("styles/siam.jl")
+include("styles/_siam.jl")
 include("styles/unsrt.jl")
 
 
 const styles = Dict(
-  :abbrv => Abbrv(),   
+  :abbrv => Abbrv(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
       # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
       # 1975.
@@ -84,12 +89,8 @@ function OutputFormat(fmt::Symbol)
 end
 
 
-# some utilities and default formatting
-include("utility.jl")
-include("format.jl")
-
 "Format a bibtext entry into a string using the given bibtext style"
-function format(data::BibInternal.Entry, style::Symbol = :abbrv, fmt::Symbol = :text)::String 
+function format(data::BibInternal.Entry, style::Symbol = :abbrv, fmt::Symbol = :text)::String
   _format(OutputFormat(fmt), BibliographyStyle(style), data)
 end
 
