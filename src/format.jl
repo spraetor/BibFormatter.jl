@@ -142,7 +142,7 @@ function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.
       address=data.in.address, month=data.date.month, year=data.date.year, note=note)
   elseif data.type == "inbook"
     checkRequiredFields("inbook", [data.authors; data.editors], data.title, data.in.chapter * data.in.pages, data.in.publisher, data.date.year)
-    blocks = formatInbook(fmt, style, title, data.in.chapter, data.in.publisher, data.date.year; authors=authors,
+    blocks = formatInBook(fmt, style, title, data.in.chapter, data.in.publisher, data.date.year; authors=authors,
       editors=editors, volume=data.in.volume, number=data.in.number, series=data.in.series,
       address=data.in.address, edition=data.in.edition, month=data.date.month, pages=data.in.pages, note=note)
   elseif data.type == "incollection"

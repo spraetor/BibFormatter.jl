@@ -20,7 +20,7 @@ include("styles/alpha.jl")
 include("styles/apalike.jl")
 include("styles/ieeetr.jl")
 include("styles/plain.jl")
-include("styles/_siam.jl")
+include("styles/siam.jl")
 include("styles/unsrt.jl")
 
 
