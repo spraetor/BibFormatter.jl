@@ -14,6 +14,7 @@ include("format.jl")
 
 
 # include the implementation of several bibtex styles
+include("styles/common.jl")
 include("styles/abbrv.jl")
 include("styles/acm.jl")
 include("styles/alpha.jl")
