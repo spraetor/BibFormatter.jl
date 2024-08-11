@@ -2,14 +2,14 @@ struct Abbrv <: BibliographyStyle end
 
 module BibliographyStyleAbbrv
 
-using ...BibFormatter: OutputFormat, formatAuthorFLast
-using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth
+using ...BibFormatter: OutputFormat, outputAddPeriod
+using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth, formatNamesFLast
 import BibInternal
 
 @enum OutputState begin
   BEFORE_ALL
   MID_SENTENCE
-  ADTER_SENTENCE
+  AFTER_SENTENCE
   AFTER_BLOCK
 end
 
@@ -22,8 +22,8 @@ mutable struct Output
   Output(fmt::OutputFormat) = new(String[], "", BEFORE_ALL, fmt)
 end
 
-function addPeriod(out::Output)
-  out.sentence =  outputAddPeriod(out.fmt, out.sentence)
+function addPeriod!(out::Output)
+  out.sentence = outputAddPeriod(out.fmt, out.sentence)
 end
 
 function outputNonNull!(out::Output, str::AbstractString)
@@ -33,7 +33,7 @@ function outputNonNull!(out::Output, str::AbstractString)
     if out.state == AFTER_BLOCK
       addPeriod!(out)
       push!(out.blocks, out.sentence)
-      out.sentence = ""
+      out.sentence = str
     else
       if out.state == BEFORE_ALL
         out.sentence = str
@@ -54,7 +54,7 @@ function outputCheck!(out::Output, str::AbstractString, msg::AbstractString)
   end
 end
 
-output!(out::Output, str::AbstractString) where T = !empty(str) && outputNonNull!(out, str)
+output!(out::Output, str::AbstractString) = !empty(str) && outputNonNull!(out, str)
 
 function finEntry!(out::Output)
   addPeriod!(out)
@@ -149,14 +149,14 @@ function formatBVolume(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.volume)
     return ""
   else
-    out = tieOrSpaceConnect(out.fmt,["volume",data.in.volume])
+    str = tieOrSpaceConnect(out.fmt,["volume",data.in.volume])
     if !empty(data.in.series)
-      out *= " of " * emphasize(data.in.series)
+      str *= " of " * emphasize(out.fmt, data.in.series)
     end
     if !empty(data.in.number)
       @warn "Can't use both 'volume' and 'number' in $(data.id)"
     end
-    return out
+    return str
   end
 end
 
@@ -168,14 +168,14 @@ function formatNumberSeries(out::Output, data::BibInternal.Entry)::String
     if empty(data.in.number)
       return data.in.series
     else
-      out = tieOrSpaceConnect(out.fmt,
+      str = tieOrSpaceConnect(out.fmt,
         [(out.state == MID_SENTENCE ? "number" : "Number"),data.in.number])
       if empty(data.in.series)
         @warn "There's a 'number' but no 'series' in $(data.id)"
       else
-        out *= " in " * data.in.series
+        str *= " in " * data.in.series
       end
-      return out
+      return str
     end
   end
 end
@@ -201,21 +201,21 @@ end
 
 "Format volume, number and pages as V(N):P"
 function formatVolNumPages(out::Output, data::BibInternal.Entry)::String
-  out = data.in.volume
+  str = data.in.volume
   if !empty(data.in.number)
-    out *= "($(data.in.number))"
+    str *= "($(data.in.number))"
     if empty(data.in.volume)
       @warn "There's a 'number' but no 'volume' in $(data.id)"
     end
   end
   if !empty(data.in.pages)
-    if empty(out)
-      out *= formatPages(out, data)
+    if empty(str)
+      str *= formatPages(out, data)
     else
-      out *= ":" * dashify(out.fmt,data.in.pages)
+      str *= ":" * dashify(out.fmt,data.in.pages)
     end
   end
-  out
+  str
 end
 
 "Format chaper and pages as 'chapter~C, pages~1--2'."
@@ -223,14 +223,14 @@ function formatChapterPages(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.chapter)
     return formatPages(out,data)
   else
-    out = empty(data.fields,"type") ?
+    str = empty(data.fields,"type") ?
       tieOrSpaceConnect(out.fmt,["chapter",data.in.chapter]) :
       tieOrSpaceConnect(out.fmt,[lowercase(data.fields["type"]),data.in.chapter])
 
     if !empty(data.in.pages)
-      out *= ", " * formatPages(out,data)
+      str *= ", " * formatPages(out,data)
     end
-    return out
+    return str
   end
 end
 
@@ -263,8 +263,8 @@ end
 
 "Format the tech report number as 'Technical Report~number' or 'Type~number'"
 function formatTrNumber(out::Output, data::BibInternal.Entry)::String
-  out = empty(data.fields,"type") ? "Technical Report" : data.fields["type"]
-  empty(data.in.number) ? uppercasefirst(lowercase(out)) : tieOrSpaceConnect(out.fmt,[out,data.in.number])
+  str = empty(data.fields,"type") ? "Technical Report" : data.fields["type"]
+  empty(data.in.number) ? uppercasefirst(lowercase(str)) : tieOrSpaceConnect(out.fmt,[str,data.in.number])
 end
 
 
@@ -324,7 +324,7 @@ function booklet(fmt::OutputFormat, data::BibInternal.Entry)
   out = Output(fmt)
   output!(out, formatAuthors(out, data))
 
-  newBlock1(out)
+  newBlock!(out)
   outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
 
   newBlockCheck!(out, data.access.howpublished, data.in.address)
@@ -631,7 +631,7 @@ end
 # Title, volume v123 of Series, chapter Chapter, pages 1-2.
 # Publisher, Address, edition edition, mm yyyy.
 # This is a note.
-function formatInbook(fmt::OutputFormat, style::Abbrv, data::BibInternal.Entry)
+function formatInBook(fmt::OutputFormat, style::Abbrv, data::BibInternal.Entry)
   BibliographyStyleAbbrv.inbook(fmt, data)
 end
 
@@ -657,7 +657,7 @@ end
 # Type, School, Address, mm yyyy.
 # This is a note.
 function formatMastersThesis(fmt::OutputFormat, style::Abbrv, data::BibInternal.Entry)
-  BibliographyStyleAbbrv.thesis(fmt, data)
+  BibliographyStyleAbbrv.mastersthesis(fmt, data)
 end
 
 # F. M. Last1, F. M. Last2, and F. M. Last3.
@@ -681,7 +681,7 @@ end
 # Organization, Publisher.
 # This is a note.
 function formatProceedings(fmt::OutputFormat, style::Abbrv, data::BibInternal.Entry)
-  BibliographyStyleAbbrv.proceeding(fmt, data)
+  BibliographyStyleAbbrv.proceedings(fmt, data)
 end
 
 # F. M. Last1, F. M. Last2, and F. M. Last3.
@@ -689,7 +689,7 @@ end
 # Type n234, Institution, Address, mm yyyy.
 # This is a note.
 function formatTechreport(fmt::OutputFormat, style::Abbrv, data::BibInternal.Entry)
-  BibliographyStyleAbbrv.rechreport(fmt, data)
+  BibliographyStyleAbbrv.techreport(fmt, data)
 end
 
 # F. M. Last1, F. M. Last2, and F. M. Last3.

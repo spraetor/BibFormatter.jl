@@ -2,7 +2,6 @@ using BibFormatter: BibliographyStyle,OutputFormat,OutputFormatHtml,OutputFormat
 using Test
 
 import Base.Filesystem
-import BibParser
 
 function printLibrary(out::IO, fmt::OutputFormat, style::BibliographyStyle, entries::AbstractDict{String,E}) where E
   println(out, outputLibraryHeader(fmt))
@@ -50,10 +49,16 @@ $entry
 
 # -----------------------------------------------------------------
 
-const bibFilename = Filesystem.joinpath(@__DIR__,"references.bib")
-const bibFile = BibParser.parse_file(bibFilename)
+const fileExtension = Dict(
+  :latex => "tex",
+  :html => "html",
+  :markdown => "md",
+  :text => "txt"
+)
 
-outFilename = Filesystem.joinpath(outputDir,"bibliography_siam.tex")
-open(outFilename,"w") do outFile
-  printLibrary(outFile, OutputFormat(:latex), BibliographyStyle(:siam), bibFile)
+let fmt = :latex, style = :abbrv
+  outFilename = Filesystem.joinpath(outputDir,"library_$(style).$(fileExtension[fmt])")
+  open(outFilename,"w") do outFile
+    printLibrary(outFile, OutputFormat(fmt), BibliographyStyle(style), bibFile)
+  end
 end

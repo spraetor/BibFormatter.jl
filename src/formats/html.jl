@@ -1,7 +1,11 @@
 struct OutputFormatHtml <: OutputFormat end
 
 function outputAddPeriod(fmt::OutputFormatHtml, str::AbstractString)
-  endswith(str, ".") || endswith(str, r"\.</[a-zA-Z]+>") ? str : str * "."
+  if !endswith(str, r"[.!?]\s*(</[a-zA-Z]+>)?")
+    replace(str, r"\s*(</[a-zA-Z]+>)?$" => s"\1.")
+  else
+    str
+  end
 end
 
 outputEmph(fmt::OutputFormatHtml, str::AbstractString) = "<em>$str</em>"

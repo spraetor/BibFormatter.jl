@@ -4,7 +4,7 @@ struct Siam <: BibliographyStyle end
 module BibliographyStyleSiam
 
 using ...BibFormatter: OutputFormat, formatAuthorFLast
-using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth
+using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth, formatNamesFLast
 import BibInternal
 
 function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::AbstractString) where T
