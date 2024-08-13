@@ -14,7 +14,7 @@ scapify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputSmallC
 dashify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputNumberRange(fmt,split(str,'-'))
 
 tieConnect(fmt::OutputFormat, arr::AbstractVector{T}) where T = outputJoinSpace(fmt,arr)
-tieOrSpaceConnect(fmt::OutputFormat, arr::AbstractVector{T}) where T = length(arr[end]) > 3 ? tieConnect(fmt,arr) : join(arr," ")
+tieOrSpaceConnect(fmt::OutputFormat, arr::AbstractVector{T}) where T = length(arr[end]) < 3 ? tieConnect(fmt,arr) : join(arr," ")
 
 
 const monthAbbrv = Dict(
