@@ -485,6 +485,7 @@ function mastersthesis(fmt::OutputFormat, data::BibInternal.Entry)
   finEntry!(out)
 end
 
+
 function misc(fmt::OutputFormat, data::BibInternal.Entry)
   out = Output(fmt)
   output!(out, formatAuthors(out, data))

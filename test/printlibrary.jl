@@ -56,7 +56,7 @@ const fileExtension = Dict(
   :text => "txt"
 )
 
-let fmt = :latex, style = :abbrv
+let fmt = :latex, style = :siam
   outFilename = Filesystem.joinpath(outputDir,"library_$(style).$(fileExtension[fmt])")
   open(outFilename,"w") do outFile
     printLibrary(outFile, OutputFormat(fmt), BibliographyStyle(style), bibFile)

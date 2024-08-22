@@ -3,7 +3,7 @@ struct Siam <: BibliographyStyle end
 
 module BibliographyStyleSiam
 
-using ...BibFormatter: OutputFormat, formatAuthorFLast
+using ...BibFormatter: OutputFormat, formatAuthorFLast, outputAddPeriod
 using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth, formatNamesFLast
 import BibInternal
 
@@ -21,6 +21,67 @@ function outputNonNull!(arr::AbstractVector{T}, str::AbstractString) where T
   @assert !empty(str)
   push!(arr, str)
 end
+
+
+# ------------------------------------------------------------------------------
+
+@enum OutputState begin
+  BEFORE_ALL
+  MID_SENTENCE
+  AFTER_BLOCK
+end
+
+mutable struct Output
+  blocks::Vector{String}
+  sentence::String
+  state::OutputState
+  fmt::OutputFormat
+
+  Output(fmt::OutputFormat) = new(String[], "", BEFORE_ALL, fmt)
+end
+
+function addPeriod!(out::Output)
+  out.sentence = outputAddPeriod(out.fmt, out.sentence)
+end
+
+function outputNonNull!(out::Output, str::AbstractString)
+  if out.state == MID_SENTENCE
+    out.sentence *= ", " * str
+  else
+    if out.state == AFTER_BLOCK
+      addPeriod!(out)
+      push!(out.blocks, out.sentence)
+    end
+    out.sentence = str
+    out.state = MID_SENTENCE
+  end
+end
+
+function outputCheck!(out::Output, str::AbstractString, msg::AbstractString)
+  if empty(str)
+    @warn msg
+  else
+    outputNonNull!(out, str)
+  end
+end
+
+output!(out::Output, str::AbstractString) = !empty(str) && outputNonNull!(out, str)
+
+function finEntry!(out::Output)
+  addPeriod!(out)
+  push!(out.blocks, out.sentence)
+  out.blocks
+end
+
+function newBlock!(out::Output)
+  if out.state != BEFORE_ALL
+    out.state = AFTER_BLOCK
+  end
+end
+
+newBlockCheck!(out::Output, str::AbstractString) = !empty(str) && newBlock!(out)
+
+# ------------------------------------------------------------------------------
 
 const journalAbbrv = Dict(
   "acmcs" => "ACM Comput. Surveys",
@@ -47,40 +108,40 @@ const journalAbbrv = Dict(
 
 replaceJournal(str::String) = empty(str) ? "" : get(journalAbbrv, str, str)
 
-formatNames(fmt::OutputFormat, names::BibInternal.Names)::String = formatNamesFLast(fmt, names)
+formatNames(out::Output, names::BibInternal.Names)::String = formatNamesFLast(out.fmt, names)
 
 "Format author names in small caps"
-function formatAuthors(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.authors) ? "" : scapify(fmt,formatNames(fmt,data.authors))
+function formatAuthors(out::Output, data::BibInternal.Entry)::String
+  empty(data.authors) ? "" : scapify(out.fmt,formatNames(out,data.authors))
 end
 
 "Format organization in small caps"
-function formatOrganization(fmt::OutputFormat, data::BibInternal.Entry)::String
-  scapify(fmt,data.in.organization)
+function formatOrganization(out::Output, data::BibInternal.Entry)::String
+  scapify(out.fmt,data.in.organization)
 end
 
 "Format editor names in small caps, postfixed by 'ed(s).'"
-function formatEditors(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.editors) ? "" : scapify(fmt,formatNames(fmt,data.editors)) * (length(data.editors) > 1 ? ", eds." : ", ed.")
+function formatEditors(out::Output, data::BibInternal.Entry)::String
+  empty(data.editors) ? "" : scapify(out.fmt,formatNames(out,data.editors)) * (length(data.editors) > 1 ? ", eds." : ", ed.")
 end
 
 "Form editor names with postfixed by 'ed(s).'"
-function formatInEditors(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.editors) ? "" : formatNames(fmt,data.editors) * (length(data.editors) > 1 ? ", eds." : ", ed.")
+function formatInEditors(out::Output, data::BibInternal.Entry)::String
+  empty(data.editors) ? "" : formatNames(out,data.editors) * (length(data.editors) > 1 ? ", eds." : ", ed.")
 end
 
 "Emphasize the title and convert it into sentence-case."
-function formatTitle(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.title) ? "" : emphasize(fmt, uppercasefirst(lowercase(data.title)))
+function formatTitle(out::Output, data::BibInternal.Entry)::String
+  empty(data.title) ? "" : emphasize(out.fmt, uppercasefirst(lowercase(data.title)))
 end
 
 "Emphasize the title."
-function formatBTitle(fmt::OutputFormat, data::BibInternal.Entry)::String
-  emphasize(fmt, data.title)
+function formatBTitle(out::Output, data::BibInternal.Entry)::String
+  emphasize(out.fmt, data.title)
 end
 
 "Format the dat as '[mm ]yyyy'."
-function formatDate(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatDate(out::Output, data::BibInternal.Entry)::String
   if empty(data.date.year)
     if empty(data.date.month)
       return ""
@@ -93,91 +154,91 @@ function formatDate(fmt::OutputFormat, data::BibInternal.Entry)::String
 end
 
 "Format 'vol.~volume of series'."
-function formatBVolume(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatBVolume(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.volume)
     return ""
   else
-    out = tieConnect(fmt,["vol.",data.in.volume])
+    str = tieConnect(out.fmt,["vol.",data.in.volume])
     if !empty(data.in.series)
-      out *= " of " * data.in.series
+      str *= " of " * data.in.series
     end
     if !empty(data.in.number)
       @warn "Can't use both 'volume' and 'number' in $(data.id)"
     end
-    return out
+    return str
   end
 end
 
 "Format 'no.~number in series'."
-function formatNumberSeries(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatNumberSeries(out::Output, data::BibInternal.Entry)::String
   if !empty(data.in.volume)
     return "" # Can't use both volume and number
   else
     if empty(data.in.number)
       return data.in.series
     else
-      out = tieConnect(fmt, ["no.",data.in.number])
+      str = tieConnect(out.fmt, ["no.",data.in.number])
       if empty(data.in.series)
         @warn "There's a 'number' but no 'series' in $(data.id)"
       else
-        out *= " in " * data.in.series
+        str *= " in " * data.in.series
       end
-      return out
+      return str
     end
   end
 end
 
 "Format edition postfixed by 'ed.'."
-function formatEdition(fmt::OutputFormat, data::BibInternal.Entry)::String
-  empty(data.in.edition) ? "" : tieConnect(fmt, [lowercase(data.in.edition),"ed."])
+function formatEdition(out::Output, data::BibInternal.Entry)::String
+  empty(data.in.edition) ? "" : tieConnect(out.fmt, [lowercase(data.in.edition),"ed."])
 end
 
 "Format pages as 'pp.~1--2' or 'p.~1."
-function formatPages(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatPages(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.pages)
     return ""
   else
     return length(split(data.in.pages,r"[-,]")) > 1 ?
-      tieConnect(fmt,["pp.",dashify(fmt,data.in.pages)]) :
-      tieConnect(fmt,["p.",data.in.pages])
+      tieConnect(out.fmt,["pp.",dashify(out.fmt,data.in.pages)]) :
+      tieConnect(out.fmt,["p.",data.in.pages])
   end
 end
 
 "Format as 'volume (year)'."
-function formatVolYear(fmt::OutputFormat, data::BibInternal.Entry)::String
-  out = data.in.volume
+function formatVolYear(out::Output, data::BibInternal.Entry)::String
+  str = data.in.volume
   if empty(data.date.year)
     @warn "Empty 'year' in $(data.id)."
   else
-    out *= " ($(data.date.year))"
+    str *= " ($(data.date.year))"
   end
-  out
+  str
 end
 
 "Format chaper and pages as 'ch.~chapter, pp.~1--2'."
-function formatChapterPages(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatChapterPages(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.chapter)
-    return formatPages(fmt,data)
+    return formatPages(out,data)
   else
-    out = empty(data.fields,"type") ?
-      tieConnect(fmt,["ch.",data.in.chapter]) :
-      tieOrSpaceConnect(fmt,[lowercase(data.fields["type"]),data.in.chapter])
+    str = empty(data.fields,"type") ?
+      tieConnect(out.fmt,["ch.",data.in.chapter]) :
+      tieOrSpaceConnect(out.fmt,[lowercase(data.fields["type"]),data.in.chapter])
 
     if !empty(data.in.pages)
-      out *= ", " * formatPages(fmt,data)
+      str *= ", " * formatPages(out,data)
     end
-    return out
+    return str
   end
 end
 
 "Formate booktitle as 'in booktitle[, editors...]'."
-function formatInEdBooktitle(fmt::OutputFormat, data::BibInternal.Entry)::String
+function formatInEdBooktitle(out::Output, data::BibInternal.Entry)::String
   if empty(data.booktitle)
     return ""
   else
     return empty(data.editors) ?
       "in " * data.booktitle :
-      "in " * data.booktitle * ", " * formatInEditors(fmt, data)
+      "in " * data.booktitle * ", " * formatInEditors(out, data)
   end
 end
 
@@ -193,149 +254,149 @@ function emptyMiscCheck(data::BibInternal.Entry)::Bool
 end
 
 "Transform the thesis type into lowercase if set."
-function formatThesisType(fmt::OutputFormat, data::BibInternal.Entry, tite::String)::String
+function formatThesisType(out::Output, data::BibInternal.Entry, tite::String)::String
   empty(data.fields,"type") ? title : lowercase(data.fields["type"])
 end
 
 "Format the tech report number as 'Tech. Rep.~number' or 'type~number'"
-function formatTrNumber(fmt::OutputFormat, data::BibInternal.Entry)::String
-  out = empty(data.fields,"type") ? "Tech. Rep." : data.fields["type"]
-  empty(data.in.number) ? lowercase(out) : tieOrSpaceConnect(fmt,[out,data.in.number])
+function formatTrNumber(out::Output, data::BibInternal.Entry)::String
+  str = empty(data.fields,"type") ? "Tech. Rep." : data.fields["type"]
+  empty(data.in.number) ? lowercase(str) : tieOrSpaceConnect(out.fmt,[str,data.in.number])
 end
 
 # TODO: crossref not implemented
 
+
 function article(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id).")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id).")
-    outputCheck!(list, replaceJournal(data.in.journal), "Empty 'journal' in $(data.id).")
-    output!(list, formatVolYear(fmt, data))
-    output!(list, formatPages(fmt, data))
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id).")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id).")
+  outputCheck!(out, replaceJournal(data.in.journal), "Empty 'journal' in $(data.id).")
+  output!(out, formatVolYear(out, data))
+  output!(out, formatPages(out, data))
 
-    [join(list, ", ")]
-  end
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  finEntry!(out)
 end
+
 
 function book(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    if empty(data.authors)
-      outputCheck!(list, formatEditors(fmt, data), "Empty 'author' and 'editor' in $(data.id).")
-    else
-      push!(list, formatAuthors(fmt, data))
-      if !empty(data.editors)
-        @warn "Can't use both 'author' and 'editor' fields in $(data.id)"
-      end
+  out = Output(fmt)
+  if empty(data.authors)
+    outputCheck!(out, formatEditors(out, data), "Empty 'author' and 'editor' in $(data.id).")
+  else
+    outputNonNull!(out, formatAuthors(out, data))
+    if !empty(data.editors)
+      @warn "Can't use both 'author' and 'editor' fields in $(data.id)"
     end
-
-    outputCheck!(list, formatBTitle(fmt, data), "Empty 'title' in $(data.id).")
-    output!(list, formatBVolume(fmt,data))
-    output!(list, formatNumberSeries(fmt,data))
-    outputCheck!(list, data.in.publisher, "Empty 'publisher' in $(data.id).")
-    output!(list, data.in.address)
-    output!(list, formatEdition(fmt,data))
-    outputCheck!(list, formatDate(fmt,data), "Empty 'year' in $(data.id).")
-
-    [join(list, ", ")]
   end
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id).")
+  output!(out, formatBVolume(out,data))
+  output!(out, formatNumberSeries(out,data))
+  outputCheck!(out, data.in.publisher, "Empty 'publisher' in $(data.id).")
+  output!(out, data.in.address)
+  output!(out, formatEdition(out,data))
+  outputCheck!(out, formatDate(out,data), "Empty 'year' in $(data.id).")
+
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
+
 
 function booklet(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list1 = [], list2 = []
-    output!(list1, formatAuthors(fmt, data))
-    outputCheck!(list1, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
+  out = Output(fmt)
+  output!(out, formatAuthors(out, data))
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
 
-    output!(list2, data.access.howpublished)
-    output!(list2, data.in.address)
-    output!(list2, formatDate(fmt, data))
+  newBlockCheck!(out, data.access.howpublished)
+  output!(out, data.access.howpublished)
+  output!(out, data.in.address)
+  output!(out, formatDate(out, data))
 
-    empty(data.access.howpublished) ?
-      [join([list1;list2], ", ")] :
-      [join(list1, ", "), join(list2, ", ")]
-  end
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  finEntry!(out)
 end
 
-function inbook(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    if empty(data.authors)
-      outputCheck!(list, formatEditors(fmt, data), "Empty 'author' and 'editor' in $(data.id)")
-    else
-      output!(list, formatAuthors(fmt, data))
-      if !empty(data.editors)
-        @warn "Can't use both 'author' and 'editor' fields in $(data.id)"
-      end
-    end
 
-    outputCheck!(list, formatBTitle(fmt, data), "Empty 'title' in $(data.id)")
-    output!(list, formatBVolume(fmt, data))
-    output!(list, formatNumberSeries(fmt, data))
-    outputCheck!(list, data.in.publisher, "Empty 'publisher' in $(data.id)")
-    output!(list, data.in.address)
-    output!(list, formatEdition(fmt, data))
-    outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    outputCheck!(list, formatChapterPages(fmt, data), "Empty 'chapter' and 'pages' in $(data.id)")
-    [join(list, ", ")]
+function inbook(fmt::OutputFormat, data::BibInternal.Entry)
+  out = Output(fmt)
+  if empty(data.authors)
+    outputCheck!(out, formatEditors(out, data), "Empty 'author' and 'editor' in $(data.id)")
+  else
+    outputNonNull!(out, formatAuthors(out, data))
+    if !empty(data.editors)
+      @warn "Can't use both 'author' and 'editor' fields in $(data.id)"
+    end
   end
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id)")
+  output!(out, formatBVolume(out, data))
+  output!(out, formatNumberSeries(out, data))
+  outputCheck!(out, data.in.publisher, "Empty 'publisher' in $(data.id)")
+  output!(out, data.in.address)
+  output!(out, formatEdition(out, data))
+  outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+  outputCheck!(out, formatChapterPages(out, data), "Empty 'chapter' and 'pages' in $(data.id)")
+
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
 function incollection(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
-    outputCheck!(list, formatInEdBooktitle(fmt, data), "Empty 'booktitle' in $(data.id)")
-    output!(list, formatBVolume(fmt, data))
-    output!(list, formatNumberSeries(fmt, data))
-    outputCheck!(list, data.in.publisher, "Empty 'publisher' in $(data.id)")
-    output!(list, data.in.address)
-    output!(list, formatEdition(fmt, data))
-    outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    output!(list, formatChapterPages(fmt, data))
-    [join(list, ", ")]
-  end
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
+  outputCheck!(out, formatInEdBooktitle(out, data), "Empty 'booktitle' in $(data.id)")
+  output!(out, formatBVolume(out, data))
+  output!(out, formatNumberSeries(out, data))
+  outputCheck!(out, data.in.publisher, "Empty 'publisher' in $(data.id)")
+  output!(out, data.in.address)
+  output!(out, formatEdition(out, data))
+  outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+  output!(out, formatChapterPages(out, data))
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
 function inproceedings(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
-    outputCheck!(list, formatInEdBooktitle(fmt, data), "Empty 'booktitle' in $(data.id)")
-    output!(list, formatBVolume(fmt, data))
-    output!(list, formatNumberSeries(fmt, data))
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
+  outputCheck!(out, formatInEdBooktitle(out, data), "Empty 'booktitle' in $(data.id)")
+  output!(out, formatBVolume(out, data))
+  output!(out, formatNumberSeries(out, data))
 
-    if empty(data.in.address)
-      output!(list, data.in.organization)
-      output!(list, data.in.publisher)
-      outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    else
-      outputNonNull!(list, data.in.address)
-      outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-      output!(list, data.in.organization)
-      output!(list, data.in.publisher)
-    end
-
-    output!(list, formatPages(fmt, data))
-    [join(list, ", ")]
+  if empty(data.in.address)
+    output!(out, data.in.organization)
+    output!(out, data.in.publisher)
+    outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+  else
+    outputNonNull!(out, data.in.address)
+    outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+    output!(out, data.in.organization)
+    output!(out, data.in.publisher)
   end
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  output!(out, formatPages(out, data))
+
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
@@ -343,134 +404,134 @@ conference(fmt::OutputFormat, data::BibInternal.Entry) = inproceedings(fmt, data
 
 
 function manual(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    if empty(data.authors)
-      output!(list, formatOrganization(fmt, data))
-    else
-      outputNonNull!(list, formatAuthors(fmt, data))
-    end
-    outputCheck!(list, formatBTitle(fmt, data), "Empty 'title' in $(data.id)")
-    if !empty(data.authors)
-      output!(list, data.in.organization)
-    end
-    output!(list, data.in.address)
-    output!(list, formatEdition(fmt, data))
-    output!(list, formatDate(fmt, data))
-    [join(list, ", ")]
+  out = Output(fmt)
+  if empty(data.authors)
+    output!(out, formatOrganization(out, data))
+  else
+    outputNonNull!(out, formatAuthors(out, data))
   end
+  outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id)")
+  if !empty(data.authors)
+    output!(out, data.in.organization)
+  end
+  output!(out, data.in.address)
+  output!(out, formatEdition(out, data))
+  output!(out, formatDate(out, data))
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
+
 
 function mastersthesis(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
-    outputNonNull!(list, formatThesisType(fmt, data, "Master's thesis"))
-    outputCheck!(list, data.in.school, "Empty 'school' in $(data.id)")
-    output!(list, data.in.address)
-    outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    [join(list, ", ")]
-  end
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
+  outputNonNull!(out, formatThesisType(out, data, "Master's thesis"))
+  outputCheck!(out, data.in.school, "Empty 'school' in $(data.id)")
+  output!(out, data.in.address)
+  outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
+
 function misc(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list1 = [], list2 = []
-    output!(list1, formatAuthors(fmt, data))
-    output!(list1, formatTitle(fmt, data))
+  out = Output(fmt)
+  output!(out, formatAuthors(out, data))
+  output!(out, formatTitle(out, data))
 
-    output!(list2, data.access.howpublished)
-    output!(list2, formatDate(fmt, data))
+  newBlockCheck!(out, data.access.howpublished)
+  output!(out, data.access.howpublished)
+  output!(out, formatDate(out, data))
 
-    empty(data.access.howpublished) ?
-      [join([list1;list2], ", ")] :
-      [join(list1, ", "), join(list2, ", ")]
-  end
-
-  output!(blocks, get(data.fields,"note",""))
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
   emptyMiscCheck(data)
-  blocks
+
+  finEntry!(out)
 end
 
 
 function phdthesis(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatBTitle(fmt, data), "Empty 'title' in $(data.id)")
-    outputNonNull!(list, formatThesisType(fmt, data, "PhD thesis"))
-    outputCheck!(list, data.in.school, "Empty 'school' in $(data.id)")
-    output!(list, data.in.address)
-    outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    [join(list, ", ")]
-  end
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id)")
+  outputNonNull!(out, formatThesisType(out, data, "PhD thesis"))
+  outputCheck!(out, data.in.school, "Empty 'school' in $(data.id)")
+  output!(out, data.in.address)
+  outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
 function proceedings(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    if empty(data.editors)
-      output!(list, formatOrganization(fmt, data))
-    else
-      outputNonNull!(list, formatEditors(fmt, data))
+  out = Output(fmt)
+  if empty(data.editors)
+    output!(out, formatOrganization(out, data))
+  else
+    outputNonNull!(out, formatEditors(out, data))
+  end
+  outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id)")
+  output!(out, formatBVolume(out, data))
+  output!(out, formatNumberSeries(out, data))
+  if empty(data.in.address)
+    if !empty(data.editors)
+      output!(out, data.in.organization)
     end
-    outputCheck!(list, formatBTitle(fmt, data), "Empty 'title' in $(data.id)")
-    output!(list, formatBVolume(fmt, data))
-    output!(list, formatNumberSeries(fmt, data))
-    if empty(data.in.address)
-      if !empty(data.editors)
-        output!(list, data.in.organization)
-      end
-      output!(list, data.in.publisher)
-      outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    else
-      outputNonNull!(list, data.in.address)
-      outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-      if !empty(data.editors)
-        output!(list, data.in.organization)
-      end
-      output!(list, data.in.publisher)
+    output!(out, data.in.publisher)
+    outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+  else
+    outputNonNull!(out, data.in.address)
+    outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
+    if !empty(data.editors)
+      output!(out, data.in.organization)
     end
-    [join(list, ", ")]
+    output!(out, data.in.publisher)
   end
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
 function techreport(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
-    outputNonNull!(list, formatTrNumber(fmt, data))
-    outputCheck!(list, data.in.institution, "Empty 'institution' in $(data.id)")
-    output!(list, data.in.address)
-    outputCheck!(list, formatDate(fmt, data), "Empty 'year' in $(data.id)")
-    [join(list, ", ")]
-  end
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
+  outputNonNull!(out, formatTrNumber(out, data))
+  outputCheck!(out, data.in.institution, "Empty 'institution' in $(data.id)")
+  output!(out, data.in.address)
+  outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
-  output!(blocks, get(data.fields,"note",""))
-  blocks
+  newBlock!(out)
+  output!(out, get(data.fields,"note",""))
+
+  finEntry!(out)
 end
 
 
 function unpublished(fmt::OutputFormat, data::BibInternal.Entry)
-  blocks = let list = []
-    outputCheck!(list, formatAuthors(fmt, data), "Empty 'author' in $(data.id)")
-    outputCheck!(list, formatTitle(fmt, data), "Empty 'title' in $(data.id)")
-    [join(list, ", ")]
-  end
+  out = Output(fmt)
+  outputCheck!(out, formatAuthors(out, data), "Empty 'author' in $(data.id)")
+  outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
 
-  outputCheck!(blocks, get(data.fields,"note",""), "Empty 'not' in $(data.id)")
-  output!(blocks, formatDate(fmt, data))
-  blocks
+  newBlock!(out)
+  outputCheck!(out, get(data.fields,"note",""), "Empty 'not' in $(data.id)")
+  output!(out, formatDate(out, data))
+
+  finEntry!(out)
 end
 
 
