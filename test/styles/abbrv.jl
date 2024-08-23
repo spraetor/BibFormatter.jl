@@ -1,3 +1,5 @@
+module AbbrvTest
+
 using BibFormatter: BibliographyStyle,OutputFormat,_format2
 using Test
 
@@ -117,7 +119,8 @@ function testLibrary(entries::AbstractDict{String,E}) where E
   end
 end
 
+end # module AbbrvTest
 
 # -----------------------------------------------------------------
 
-testLibrary(bibFile)
+AbbrvTest.testLibrary(bibFile)

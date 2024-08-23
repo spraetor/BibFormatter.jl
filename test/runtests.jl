@@ -14,3 +14,4 @@ include("printlibrary.jl")
 # include("generatelatex.jl")
 
 include("styles/abbrv.jl")
+include("styles/siam.jl")

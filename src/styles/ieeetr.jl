@@ -1,14 +1,11 @@
 struct Ieeetr <: BibliographyStyle end
 
 formatAuthor(fmt::OutputFormat, style::Ieeetr, von, last, junior, first, second)::String = formatAuthorFLast(fmt, von, last, junior, first, second)
-
 formatVolume(fmt::OutputFormat, style::Ieeetr, volume::AbstractString) = outputJoinSpace(fmt,["vol.",volume])
 formatNumber(fmt::OutputFormat, style::Ieeetr, volume::AbstractString) = outputJoinSpace(fmt,["no.",volume])
 formatPages(fmt::OutputFormat, style::Ieeetr, pages::AbstractString) = !isempty(pages) ? outputJoinSpace(fmt,["pp.",outputNumberRange(fmt,split(pages,'-'))]) : ""
 formatEdition(fmt::OutputFormat, style::Ieeetr, edition::AbstractString) = !isempty(edition) ? outputJoinSpace(fmt,[lowercase(edition),"ed."]) : ""
-
 formatEditors(style::Ieeetr, editors::AbstractString)::String = joinNotEmpty(editors,", ",isMultipleAuthors(editors) ? "eds." : "ed.")
-
 formatChapter(style::Ieeetr, chapter::AbstractString, type::AbstractString)::String = joinNotEmpty(isempty(type) ? "chapter" : lowercase(type), " ", chapter)
 
 
@@ -25,7 +22,7 @@ function formatArticle(fmt::OutputFormat, style::Ieeetr, authors, title, journal
       push!(sublist, outputEmph(fmt,journal))
       push!(list, join(sublist, " "))
     end
-    
+
     if !isempty(volume)
       push!(list, formatVolume(fmt,style,volume))
     end
@@ -154,7 +151,7 @@ function formatInCollection(fmt::OutputFormat, style::Ieeetr, authors, title, bo
       pushNotEmpty!(sublist, joinNotEmpty("(",formatEditors(style,editors),")"))
       push!(list, join(sublist, " "))
     end
-    
+
     if !isempty(volume) && !isempty(series)
       push!(list, formatVolume(fmt,style,volume) * " of " * outputEmph(fmt,series))
     elseif !isempty(number) && !isempty(series)
@@ -219,7 +216,7 @@ function formatMastersThesis(fmt::OutputFormat, style::Ieeetr, author, title, sc
     end
     push!(blocks, join(list, ", "))
   end
-  
+
   pushNotEmpty!(blocks, note)
   blocks
 end
@@ -243,7 +240,7 @@ function formatMisc(fmt::OutputFormat, style::Ieeetr; authors="", title="", howp
     end
     push!(blocks, join(list, ", "))
   end
-  
+
   pushNotEmpty!(blocks, note)
   blocks
 end
@@ -312,7 +309,7 @@ function formatTechreport(fmt::OutputFormat, style::Ieeetr, authors, title, inst
     end
     push!(blocks, join(list, ", "))
   end
-  
+
   pushNotEmpty!(blocks, note)
   blocks
 end
@@ -331,6 +328,6 @@ function formatUnpublished(fmt::OutputFormat, style::Ieeetr, authors, title, not
     end
     push!(blocks, join(list, ", "))
   end
-  
+
   blocks
 end
