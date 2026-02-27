@@ -1,6 +1,7 @@
-using BibFormatter: OutputFormat, OutputFormatLatex, OutputFormatHtml, OutputFormatText, outputAddPeriod
+using BibFormatter
+using BibFormatter: outputAddPeriod
 
-function testOutput(fmt::OutputFormatHtml)
+function testOutput(::OutputFormatHtml)
 
 end
 
@@ -16,7 +17,7 @@ function testOutput(fmt::OutputFormatLatex)
   @test outputAddPeriod(fmt, "\emph{str?}") == "\emph{str?}"
 end
 
-function testOutput(fmt::OutputFormatText)
+function testOutput(::OutputFormatText)
 
 end
 

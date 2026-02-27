@@ -1,6 +1,6 @@
 using Logging
 
-pushNotEmpty!(a::AbstractArray{S,1}, s::AbstractString) where {S} = isempty(s) || push!(a,s)
+pushNotEmpty!(a::AbstractVector, s::AbstractString) = isempty(s) || push!(a,s)
 
 joinNotEmpty(s1::AbstractString, s2::AbstractString) = (!isempty(s1) && !isempty(s2)) ? s1 * s2 : ""
 joinNotEmpty(s1::AbstractString, s2::AbstractString, s...) = joinNotEmpty(joinNotEmpty(s1,s2),s...)
@@ -16,7 +16,7 @@ function checkRequiredField(type::AbstractString, field::AbstractString)
   end
 end
 
-function checkRequiredField(type::AbstractString, field::AbstractArray{T,1}) where {T}
+function checkRequiredField(type::AbstractString, field::AbstractVector)
   if length(field) == 0
     @warn "Missing required field '$field' for bibliography type '$type'"
   end

@@ -100,24 +100,24 @@ end
 
 formatBlock(fmt::OutputFormat, block::AbstractString) = outputAddPeriod(fmt, uppercasefirst(strip(block)))
 formatBlocks(fmt::OutputFormat, style::BibliographyStyle, blocks::Nothing) = "Not implemented"
-formatBlocks(fmt::OutputFormat, style::BibliographyStyle, blocks::AbstractVector{S}) where S = outputBlocks(fmt, map((b) -> formatBlock(fmt,b), blocks))
+formatBlocks(fmt::OutputFormat, ::BibliographyStyle, blocks::AbstractVector) = outputBlocks(fmt, map((b) -> formatBlock(fmt,b), blocks))
 
 
 # default implementation of all bibtex entry types
-formatArticle(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatBook(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatBooklet(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-#formatConference(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatInBook(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatInCollection(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-#formatInProceedings(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatManual(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatMastersThesis(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatMisc(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatPhDThesis(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatProceedings(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatTechreport(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
-formatUnpublished(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry) = nothing
+formatArticle(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatBook(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatBooklet(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+#formatConference(::OutputFormat, ::BibliographyStyle, daa::BibInternal.Entry) = nothing
+formatInBook(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatInCollection(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+#formatInProceedings(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatManual(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatMastersThesis(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatMisc(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatPhDThesis(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatProceedings(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatTechreport(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatUnpublished(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
 
 
 function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry)::String

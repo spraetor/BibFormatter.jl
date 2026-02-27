@@ -1,6 +1,6 @@
 struct OutputFormatHtml <: OutputFormat end
 
-function outputAddPeriod(fmt::OutputFormatHtml, str::AbstractString)
+function outputAddPeriod(::OutputFormatHtml, str::AbstractString)
   if !endswith(str, r"[.!?]\s*(</[a-zA-Z]+>)?")
     replace(str, r"\s*(</[a-zA-Z]+>)?$" => s"\1.")
   else
@@ -8,9 +8,9 @@ function outputAddPeriod(fmt::OutputFormatHtml, str::AbstractString)
   end
 end
 
-outputEmph(fmt::OutputFormatHtml, str::AbstractString) = "<em>$str</em>"
-outputSmallCaps(fmt::OutputFormatHtml, str::AbstractString) = "<span class=\"sc\">$str</span>"
-outputQuote(fmt::OutputFormatHtml, str::AbstractString) = "&ldquo;$str&rdquo;"
-outputJoinSpace(fmt::OutputFormatHtml, list::AbstractVector{S}) where S = join(list, "&nbsp;")
-outputNumberRange(fmt::OutputFormatHtml, pair::AbstractVector{S}) where S = join(pair, "&ndash;")
-outputBlocks(fmt::OutputFormatHtml, blocks::AbstractVector{S}) where S = join(blocks, "\n")
+outputEmph(::OutputFormatHtml, str::AbstractString) = "<em>$str</em>"
+outputSmallCaps(::OutputFormatHtml, str::AbstractString) = "<span class=\"sc\">$str</span>"
+outputQuote(::OutputFormatHtml, str::AbstractString) = "&ldquo;$str&rdquo;"
+outputJoinSpace(::OutputFormatHtml, list::AbstractVector) = join(list, "&nbsp;")
+outputNumberRange(::OutputFormatHtml, pair::AbstractVector) = join(pair, "&ndash;")
+outputBlocks(::OutputFormatHtml, blocks::AbstractVector) = join(blocks, "\n")

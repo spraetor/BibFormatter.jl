@@ -1,7 +1,5 @@
 module BibFormatter
 
-export format
-
 import BibInternal
 
 abstract type BibliographyStyle end
@@ -90,9 +88,13 @@ function OutputFormat(fmt::Symbol)
 end
 
 
-"Format a bibtext entry into a string using the given bibtext style"
-function format(data::BibInternal.Entry, style::Symbol = :abbrv, fmt::Symbol = :text)::String
-  _format(OutputFormat(fmt), BibliographyStyle(style), data)
+"Format a bibtex entry into a string using the given bibtex style"
+function format(data::BibInternal.Entry; style::Symbol = :abbrv, fmt::Symbol = :text)::String
+  _format2(OutputFormat(fmt), BibliographyStyle(style), data)
 end
+
+
+export BibliographyStyle, OutputFormat, OutputFormatLatex, OutputFormatHtml, OutputFormatText
+export format
 
 end # module BibFormatter

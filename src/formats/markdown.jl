@@ -1,6 +1,6 @@
 struct OutputFormatMarkdown <: OutputFormat end
 
-function outputAddPeriod(fmt::OutputFormatMarkdown, str::AbstractString)
+function outputAddPeriod(::OutputFormatMarkdown, str::AbstractString)
   if !endswith(str, r"[.!?]\s*}?")
     replace(str, r"\s*(})?$" => s".\1")
   else
@@ -8,9 +8,9 @@ function outputAddPeriod(fmt::OutputFormatMarkdown, str::AbstractString)
   end
 end
 
-outputEmph(fmt::OutputFormatMarkdown, str::AbstractString) = "*$str*"
-outputSmallCaps(fmt::OutputFormatMarkdown, str::AbstractString) = "^^$str^^"
-outputQuote(fmt::OutputFormatMarkdown, str::AbstractString) = "\"$str\""
-outputJoinSpace(fmt::OutputFormatMarkdown, list::AbstractVector{S}) where S = join(list, " ")
-outputNumberRange(fmt::OutputFormatMarkdown, pair::AbstractVector{S}) where S = join(pair, "&ndash;")
-outputBlocks(fmt::OutputFormatMarkdown, blocks::AbstractVector{S}) where S = join(blocks, "\n")
+outputEmph(::OutputFormatMarkdown, str::AbstractString) = "*$str*"
+outputSmallCaps(::OutputFormatMarkdown, str::AbstractString) = "^^$str^^"
+outputQuote(::OutputFormatMarkdown, str::AbstractString) = "\"$str\""
+outputJoinSpace(::OutputFormatMarkdown, list::AbstractVector) = join(list, " ")
+outputNumberRange(::OutputFormatMarkdown, pair::AbstractVector) = join(pair, "&ndash;")
+outputBlocks(::OutputFormatMarkdown, blocks::AbstractVector) = join(blocks, "\n")

@@ -1,14 +1,15 @@
-using BibFormatter: BibliographyStyle,OutputFormat,OutputFormatHtml,OutputFormatLatex,_format2
+using BibFormatter
 using Test
 
 import Base.Filesystem
 
-function printLibrary(out::IO, fmt::OutputFormat, style::BibliographyStyle, entries::AbstractDict{String,E}) where E
-  println(out, outputLibraryHeader(fmt))
+function printLibrary(out::IO, fmt::Symbol, style::Symbol, entries::AbstractDict{String,E}) where E
+  outputFormat = OutputFormat(fmt)
+  println(out, outputLibraryHeader(outputFormat))
   for (key,entry) in entries
-    println(out, outputEntry(fmt, key, _format2(fmt,style,entry)))
+    println(out, outputEntry(outputFormat, key, format(entry,style=style,fmt=fmt)))
   end
-  println(out, outputLibraryFooter(fmt))
+  println(out, outputFormat)
 end
 
 outputLibraryHeader(fmt::OutputFormat) = ""
@@ -38,9 +39,9 @@ outputLibraryFooter(fmt::OutputFormatHtml) = """
 </html>"""
 
 
-outputEntry(fmt::OutputFormat, key::AbstractString, entry::AbstractString) = "[$key] " * entry
-outputEntry(fmt::OutputFormatLatex, key::AbstractString, entry::AbstractString) = "\\bibitem{$key}\n$entry\n"
-outputEntry(fmt::OutputFormatHtml, key::AbstractString, entry::AbstractString) = """
+outputEntry(::OutputFormat, key::AbstractString, entry::AbstractString) = "[$key] " * entry
+outputEntry(::OutputFormatLatex, key::AbstractString, entry::AbstractString) = "\\bibitem{$key}\n$entry\n"
+outputEntry(::OutputFormatHtml, key::AbstractString, entry::AbstractString) = """
 <dt class="bibkey">$key</dt>
 <dd class="bibitem" id="bibitem_$key">
 $entry
@@ -59,6 +60,6 @@ const fileExtension = Dict(
 let fmt = :latex, style = :siam
   outFilename = Filesystem.joinpath(outputDir,"library_$(style).$(fileExtension[fmt])")
   open(outFilename,"w") do outFile
-    printLibrary(outFile, OutputFormat(fmt), BibliographyStyle(style), bibFile)
+    printLibrary(outFile, fmt, style, bibFile)
   end
 end

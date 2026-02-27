@@ -1,7 +1,7 @@
 using BibFormatter: styles
 import Base.Filesystem
 
-# generte example outputs from bibtext
+# generate example outputs from bibtext
 for style in keys(styles)
   texFilename = Filesystem.joinpath(outputDir,"bibliographystyle_" * string(style) * ".tex")
   open(texFilename,"w") do texFile

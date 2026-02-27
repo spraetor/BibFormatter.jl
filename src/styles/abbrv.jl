@@ -283,7 +283,7 @@ function article(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id).")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -314,7 +314,7 @@ function book(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out,data), "Empty 'year' in $(data.id).")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -333,7 +333,7 @@ function booklet(fmt::OutputFormat, data::BibInternal.Entry)
   output!(out, formatDate(out, data))
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -365,7 +365,7 @@ function inbook(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -391,7 +391,7 @@ function incollection(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -424,7 +424,7 @@ function inproceedings(fmt::OutputFormat, data::BibInternal.Entry)
   end
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -460,7 +460,7 @@ function manual(fmt::OutputFormat, data::BibInternal.Entry)
   output!(out, formatDate(out, data))
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -480,7 +480,7 @@ function mastersthesis(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -498,7 +498,7 @@ function misc(fmt::OutputFormat, data::BibInternal.Entry)
   output!(out, formatDate(out, data))
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
   emptyMiscCheck(data)
 
   finEntry!(out)
@@ -519,7 +519,7 @@ function phdthesis(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -559,7 +559,7 @@ function proceedings(fmt::OutputFormat, data::BibInternal.Entry)
   end
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -579,7 +579,7 @@ function techreport(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id)")
 
   newBlock!(out)
-  output!(out, get(data.fields,"note",""))
+  output!(out, data.note)
 
   finEntry!(out)
 end
@@ -593,7 +593,7 @@ function unpublished(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id)")
 
   newBlock!(out)
-  outputCheck!(out, get(data.fields,"note",""), "Empty 'not' in $(data.id)")
+  outputCheck!(out, data.note, "Empty 'note' in $(data.id)")
   output!(out, formatDate(out, data))
 
   finEntry!(out)

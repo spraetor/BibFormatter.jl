@@ -1,6 +1,6 @@
 struct OutputFormatLatex <: OutputFormat end
 
-function outputAddPeriod(fmt::OutputFormatLatex, str::AbstractString)
+function outputAddPeriod(::OutputFormatLatex, str::AbstractString)
   if !endswith(str, r"[.!?]\s*}?")
     replace(str, r"\s*(})?$" => s"\1.")
   else
@@ -8,9 +8,9 @@ function outputAddPeriod(fmt::OutputFormatLatex, str::AbstractString)
   end
 end
 
-outputEmph(fmt::OutputFormatLatex, str::AbstractString) = "{\\em $str}"
-outputSmallCaps(fmt::OutputFormatLatex, str::AbstractString) = "{\\sc $str}"
-outputQuote(fmt::OutputFormatLatex, str::AbstractString) = "``$str''"
-outputJoinSpace(fmt::OutputFormatLatex, list::AbstractVector{S}) where S = join(list, "~")
-outputNumberRange(fmt::OutputFormatLatex, pair::AbstractVector{S}) where S = join(pair, "--")
-outputBlocks(fmt::OutputFormatLatex, blocks::AbstractVector{S}) where S = join(blocks, "\n\\newblock ")
+outputEmph(::OutputFormatLatex, str::AbstractString) = "{\\em $str}"
+outputSmallCaps(::OutputFormatLatex, str::AbstractString) = "{\\sc $str}"
+outputQuote(::OutputFormatLatex, str::AbstractString) = "``$str''"
+outputJoinSpace(::OutputFormatLatex, list::AbstractVector) = join(list, "~")
+outputNumberRange(::OutputFormatLatex, pair::AbstractVector) = join(pair, "--")
+outputBlocks(::OutputFormatLatex, blocks::AbstractVector) = join(blocks, "\n\\newblock ")
