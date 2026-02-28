@@ -1,5 +1,6 @@
 outputAddPeriod(::OutputFormat, str::AbstractString) = endswith(str, ".") ? str : str * "."
 outputEmph(::OutputFormat, str::AbstractString) = str
+outputEmphIc(fmt::OutputFormat, str::AbstractString) = outputEmph(fmt, str)
 outputSmallCaps(::OutputFormat, str::AbstractString) = str
 outputQuote(::OutputFormat, str::AbstractString) = "\"$str\""
 outputJoinSpace(::OutputFormat, list::AbstractVector) = join(list, " ")

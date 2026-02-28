@@ -8,57 +8,54 @@ abstract type OutputFormat end
 # some utilities and default formatting
 include("utility.jl")
 include("output.jl")
+include("names.jl")
+include("style_text.jl")
+include("months.jl")
+include("journals.jl")
 include("format.jl")
 
 
 # include the implementation of several bibtex styles
-include("styles/common.jl")
 include("styles/abbrv.jl")
 include("styles/acm.jl")
-include("styles/alpha.jl")
 include("styles/apalike.jl")
 include("styles/ieeetr.jl")
 include("styles/plain.jl")
 include("styles/siam.jl")
-include("styles/unsrt.jl")
 
+# alpha.bst and unsrt.bst currently match plain.bst behavior in this package.
+const Alpha = Plain
+const Unsrt = Plain
 
 const styles = Dict(
   :abbrv => Abbrv(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
       # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
       # 1975.
-
   :acm => Acm(),
       # \textsc{Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C.} Cubature formulas of degree nine
       # for symmetric planar regions. \emph{Mathematics of Computation 29}, 131 (1975),
       # 810-815.
-
   :alpha => Alpha(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree
       # nine for symmetric planar regions. \emph{Mathematics of Computation},
       # 29(131):810-815, 1975.
-
   :apalike => Apalike(),
       # Rabinowitz, P., Kautsky, J., Elhay, S., and Butcher, J. C. (1975). Cubature formulas of degree
       # nine for symmetric planar regions. \emph{Mathematics of Computation},
       # 29(131):810-815.
-
   :ieeetr => Ieeetr(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher, ``Cubature formulas of degree nine for
       # symmetric planar regions,'' \emph{Mathematics of Computation}, vol. 29, no. 131,
       # pp. 810-815, 1975.
-
   :plain => Plain(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
       # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
       # 1975.
-
   :siam => Siam(),
       # \textsc{P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher}, \emph{Cubature formulas of degree nine
       # for symmetric planar regions}, Mathematics of Computation, 29 (1975),
       # pp. 810-815.
-
   :unsrt => Unsrt(),
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
       # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
@@ -72,14 +69,16 @@ end
 
 
 # include the implementation of several output formats
-include("formats/text.jl")
 include("formats/html.jl")
 include("formats/latex.jl")
+include("formats/markdown.jl")
+include("formats/text.jl")
 
 const formats = Dict(
-  :text => OutputFormatText(),
   :html => OutputFormatHtml(),
   :latex => OutputFormatLatex(),
+  :md => OutputFormatMarkdown(),
+  :text => OutputFormatText(),
 )
 
 # convert an symbol of output formats into the format type
@@ -90,7 +89,7 @@ end
 
 "Format a bibtex entry into a string using the given bibtex style"
 function format(data::BibInternal.Entry; style::Symbol = :abbrv, fmt::Symbol = :text)::String
-  _format2(OutputFormat(fmt), BibliographyStyle(style), data)
+  _format(OutputFormat(fmt), BibliographyStyle(style), data)
 end
 
 

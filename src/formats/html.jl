@@ -9,7 +9,7 @@ function outputAddPeriod(::OutputFormatHtml, str::AbstractString)
 end
 
 outputEmph(::OutputFormatHtml, str::AbstractString) = "<em>$str</em>"
-outputSmallCaps(::OutputFormatHtml, str::AbstractString) = "<span class=\"sc\">$str</span>"
+outputSmallCaps(::OutputFormatHtml, str::AbstractString) = "<span class=\"smallcaps\">$str</span>"
 outputQuote(::OutputFormatHtml, str::AbstractString) = "&ldquo;$str&rdquo;"
 outputJoinSpace(::OutputFormatHtml, list::AbstractVector) = join(list, "&nbsp;")
 outputNumberRange(::OutputFormatHtml, pair::AbstractVector) = join(pair, "&ndash;")

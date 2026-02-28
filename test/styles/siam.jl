@@ -1,6 +1,6 @@
 module SiamTest
 
-using BibFormatter: BibliographyStyle,OutputFormat,_format2
+using BibFormatter: format
 using Test
 
 simplifyString(str::AbstractString) = replace(str, r"\n[ ]+" => " ")
@@ -96,7 +96,7 @@ end
 
 function testLibrary(entries::AbstractDict{String,E}) where E
   for (key,entry) in entries
-    testEntry(key, _format2(OutputFormat(:latex),BibliographyStyle(:siam),entry))
+    testEntry(key, format(entry, style=:siam, fmt=:latex))
   end
 end
 

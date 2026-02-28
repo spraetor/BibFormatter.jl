@@ -9,6 +9,7 @@ function outputAddPeriod(::OutputFormatLatex, str::AbstractString)
 end
 
 outputEmph(::OutputFormatLatex, str::AbstractString) = "{\\em $str}"
+outputEmphIc(fmt::OutputFormatLatex, str::AbstractString) = outputEmph(fmt, str * "\\/")
 outputSmallCaps(::OutputFormatLatex, str::AbstractString) = "{\\sc $str}"
 outputQuote(::OutputFormatLatex, str::AbstractString) = "``$str''"
 outputJoinSpace(::OutputFormatLatex, list::AbstractVector) = join(list, "~")

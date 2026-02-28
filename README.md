@@ -6,7 +6,7 @@
 [![Coverage](https://codecov.io/gh/spraetor/BibFormatter.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/spraetor/BibFormatter.jl)
 
 ## Usage
-Convert a bibtex entry from BibParser into a formatted bibliography block, either a LaTeX format, plain text, or html:
+Convert a BibTeX entry from `BibParser` into a formatted bibliography block:
 
 Assume we have a bibtex file `reference.bib` with entries like
 ```bibtex
@@ -39,7 +39,23 @@ F.~S. von Last, Junior, F.~M. Last2, and F.~M. Last3.
 \newblock This is a note.
 ```
 
-Currently, two formats are implemented: `:abbrv` and `:siam`. For the output format, we have implemented `:latex`, `:text`, and `:html`.
+Available bibliography styles:
+
+- `:abbrv`
+- `:acm`
+- `:alpha` (alias of `:plain`)
+- `:apalike`
+- `:ieeetr`
+- `:plain`
+- `:siam`
+- `:unsrt` (alias of `:plain`)
+
+Available output formats:
+
+- `:latex`
+- `:text`
+- `:html`
+- `:md`
 
 ```julia
 println(BibFormatter.format(bibFile["Article"], style=:abbrv, fmt=:text))

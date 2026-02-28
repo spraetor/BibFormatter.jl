@@ -2,8 +2,7 @@ struct Abbrv <: BibliographyStyle end
 
 module BibliographyStyleAbbrv
 
-using ...BibFormatter: OutputFormat, outputAddPeriod
-using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth, formatNamesFLast
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNamesFLast, outputAddPeriod, replaceJournalAbbrv, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 @enum OutputState begin
@@ -82,56 +81,30 @@ newSentenceCheck!(out::Output, str1::AbstractString, str2::AbstractString) = !(e
 
 
 
-const journalAbbrv = Dict(
-  "acmcs" => "ACM Comput. Surv.",
-  "acta" => "Acta Inf.",
-  "cacm" => "Commun. ACM",
-  "ibmjrd" => "IBM J. Res. Dev.",
-  "ibmsj" => "IBM Syst.~J.",
-  "ieeese" => "IEEE Trans. Softw. Eng.",
-  "ieeetc" => "IEEE Trans. Comput.",
-  "ieeetcad" => "IEEE Trans. Comput.-Aided Design Integrated Circuits",
-  "ipl" => "Inf. Process. Lett.",
-  "jacm" => "J.~ACM",
-  "jcss" => "J.~Comput. Syst. Sci.",
-  "scp" => "Sci. Comput. Programming",
-  "sicomp" => "SIAM J. Comput.",
-  "tocs" => "ACM Trans. Comput. Syst.",
-  "tods" => "ACM Trans. Database Syst.",
-  "tog" => "ACM Trans. Gr.",
-  "toms" => "ACM Trans. Math. Softw.",
-  "toois" => "ACM Trans. Office Inf. Syst.",
-  "toplas" => "ACM Trans. Prog. Lang. Syst.",
-  "tcs" => "Theoretical Comput. Sci.",
-)
-
-replaceJournal(str::String) = empty(str) ? "" : get(journalAbbrv, str, str)
-
-
 formatNames(out::Output, names::BibInternal.Names)::String = formatNamesFLast(out.fmt, names)
 
-"Format author names"
+"""Format author names."""
 function formatAuthors(out::Output, data::BibInternal.Entry)::String
   empty(data.authors) ? "" : formatNames(out,data.authors)
 end
 
-"Form editor names with postfixed by 'editor(s).'"
+"""Form editor names with postfixed by 'editor(s)'."""
 function formatEditors(out::Output, data::BibInternal.Entry)::String
   empty(data.editors) ? "" :
     formatNames(out,data.editors) * (length(data.editors) > 1 ? ", editors" : ", editor")
 end
 
-"Convert the title into sentence-case."
+"""Convert the title into sentence-case."""
 function formatTitle(out::Output, data::BibInternal.Entry)::String
   empty(data.title) ? "" : uppercasefirst(lowercase(data.title))
 end
 
-"Emphasize the title."
+"""Emphasize the title."""
 function formatBTitle(out::Output, data::BibInternal.Entry)::String
   emphasize(out.fmt, data.title)
 end
 
-"Format the date as '[mm ]yyyy'."
+"""Format the date as '[mm ]yyyy'."""
 function formatDate(out::Output, data::BibInternal.Entry)::String
   if empty(data.date.year)
     if empty(data.date.month)
@@ -144,7 +117,7 @@ function formatDate(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Format 'volume~V of series'."
+"""Format 'volume~V of series'."""
 function formatBVolume(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.volume)
     return ""
@@ -160,7 +133,7 @@ function formatBVolume(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Format 'number~N in series'."
+"""Format 'number~N in series'."""
 function formatNumberSeries(out::Output, data::BibInternal.Entry)::String
   if !empty(data.in.volume)
     return "" # Can't use both volume and number
@@ -180,7 +153,7 @@ function formatNumberSeries(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Format edition postfixed by 'edition'."
+"""Format edition postfixed by 'edition'."""
 function formatEdition(out::Output, data::BibInternal.Entry)::String
   empty(data.in.edition) ? "" :
     (out.state == MID_SENTENCE ?
@@ -188,7 +161,7 @@ function formatEdition(out::Output, data::BibInternal.Entry)::String
       uppercasefirst(lowercase(data.in.edition))) * " edition"
 end
 
-"Format pages as 'pages~1--2' or 'page~1."
+"""Format pages as 'pages~1--2' or 'page~1'."""
 function formatPages(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.pages)
     return ""
@@ -199,7 +172,7 @@ function formatPages(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Format volume, number and pages as V(N):P"
+"""Format volume, number and pages as V(N):P."""
 function formatVolNumPages(out::Output, data::BibInternal.Entry)::String
   str = data.in.volume
   if !empty(data.in.number)
@@ -218,7 +191,7 @@ function formatVolNumPages(out::Output, data::BibInternal.Entry)::String
   str
 end
 
-"Format chaper and pages as 'chapter~C, pages~1--2'."
+"""Format chapter and pages as 'chapter~C, pages~1--2'."""
 function formatChapterPages(out::Output, data::BibInternal.Entry)::String
   if empty(data.in.chapter)
     return formatPages(out,data)
@@ -234,7 +207,7 @@ function formatChapterPages(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Formate booktitle as 'in booktitle[, editors...]'."
+"""Format booktitle as 'in booktitle[, editors...]'."""
 function formatInEdBooktitle(out::Output, data::BibInternal.Entry)::String
   if empty(data.booktitle)
     return ""
@@ -245,23 +218,12 @@ function formatInEdBooktitle(out::Output, data::BibInternal.Entry)::String
   end
 end
 
-"Check if all relevant fields for the misc type are empty."
-function emptyMiscCheck(data::BibInternal.Entry)::Bool
-  if empty(data.authors) && empty(data.title) && empty(data.access.howpublished) &&
-     empty(data.date.month) && empty(data.date.year) && haskey(data.fields,"note")
-     @warn "All relevant fields are empty in $(data.id)."
-    return false
-  else
-    return true
-  end
-end
-
-"Transform the thesis type into sentencecase if set."
-function formatThesisType(out::Output, data::BibInternal.Entry, tite::String)::String
+"""Transform the thesis type into sentence-case if set."""
+function formatThesisType(::Output, data::BibInternal.Entry, title::String)::String
   empty(data.fields,"type") ? title : uppercasefirst(lowercase(data.fields["type"]))
 end
 
-"Format the tech report number as 'Technical Report~number' or 'Type~number'"
+"""Format the tech report number as 'Technical Report~number' or 'Type~number'."""
 function formatTrNumber(out::Output, data::BibInternal.Entry)::String
   str = empty(data.fields,"type") ? "Technical Report" : data.fields["type"]
   empty(data.in.number) ? uppercasefirst(lowercase(str)) : tieOrSpaceConnect(out.fmt,[str,data.in.number])
@@ -278,7 +240,7 @@ function article(fmt::OutputFormat, data::BibInternal.Entry)
   outputCheck!(out, formatTitle(out, data), "Empty 'title' in $(data.id).")
 
   newBlock!(out)
-  outputCheck!(out, emphasize(fmt,replaceJournal(data.in.journal)), "Empty 'journal' in $(data.id).")
+  outputCheck!(out, emphasize(fmt, replaceJournalAbbrv(data.in.journal)), "Empty 'journal' in $(data.id).")
   output!(out, formatVolNumPages(out, data))
   outputCheck!(out, formatDate(out, data), "Empty 'year' in $(data.id).")
 
@@ -447,7 +409,7 @@ function manual(fmt::OutputFormat, data::BibInternal.Entry)
   newBlock!(out)
   outputCheck!(out, formatBTitle(out, data), "Empty 'title' in $(data.id)")
   if empty(data.authors)
-    if empty(Data.in.organization)
+    if empty(data.in.organization)
       newBlockCheck!(out, data.in.address)
       output!(out, data.in.address)
     end

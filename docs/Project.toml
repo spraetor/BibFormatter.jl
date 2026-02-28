@@ -1,0 +1,7 @@
+[deps]
+BibFormatter = "4e8691f6-bd88-4c22-a28c-d5957cb74d98"
+BibParser = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
+[compat]
+Documenter = "1"

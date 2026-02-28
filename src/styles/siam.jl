@@ -3,8 +3,7 @@ struct Siam <: BibliographyStyle end
 
 module BibliographyStyleSiam
 
-using ...BibFormatter: OutputFormat, formatAuthorFLast, outputAddPeriod
-using ..BibliographyStyleCommon: empty, emphasize, scapify, dashify, tieConnect, tieOrSpaceConnect, replaceMonth, formatNamesFLast
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNameFLast, formatNamesFLast, outputAddPeriod, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::AbstractString) where T
@@ -24,6 +23,31 @@ end
 
 
 # ------------------------------------------------------------------------------
+
+const journalAbbrv = Dict(
+  "acmcs" => "ACM Comput. Surveys",
+  "acta" => "Acta Inf.",
+  "cacm" => "Comm. ACM",
+  "ibmjrd" => "IBM J. Res. Dev.",
+  "ibmsj" => "IBM Syst.~J.",
+  "ieeese" => "IEEE Trans. Softw. Eng.",
+  "ieeetc" => "IEEE Trans. Comput.",
+  "ieeetcad" => "IEEE Trans. Comput.-Aided Design Integrated Circuits",
+  "ipl" => "Inf. Process. Lett.",
+  "jacm" => "J.~Assoc. Comput. Mach.",
+  "jcss" => "J.~Comput. System Sci.",
+  "scp" => "Sci. Comput. Programming",
+  "sicomp" => "SIAM J. Comput.",
+  "tocs" => "ACM Trans. Comput. Syst.",
+  "tods" => "ACM Trans. Database Syst.",
+  "tog" => "ACM Trans. Gr.",
+  "toms" => "ACM Trans. Math. Softw.",
+  "toois" => "ACM Trans. Office Inf. Syst.",
+  "toplas" => "ACM Trans. Prog. Lang. Syst.",
+  "tcs" => "Theoretical Comput. Sci.",
+)
+
+replaceJournal(str::String) = empty(str) ? "" : get(journalAbbrv, str, str)
 
 @enum OutputState begin
   BEFORE_ALL
@@ -83,31 +107,7 @@ newBlockCheck!(out::Output, str::AbstractString) = !empty(str) && newBlock!(out)
 
 # ------------------------------------------------------------------------------
 
-const journalAbbrv = Dict(
-  "acmcs" => "ACM Comput. Surveys",
-  "acta" => "Acta Inf.",
-  "cacm" => "Comm. ACM",
-  "ibmjrd" => "IBM J. Res. Dev.",
-  "ibmsj" => "IBM Syst.~J.",
-  "ieeese" => "IEEE Trans. Softw. Eng.",
-  "ieeetc" => "IEEE Trans. Comput.",
-  "ieeetcad" => "IEEE Trans. Comput.-Aided Design Integrated Circuits",
-  "ipl" => "Inf. Process. Lett.",
-  "jacm" => "J.~Assoc. Comput. Mach.",
-  "jcss" => "J.~Comput. System Sci.",
-  "scp" => "Sci. Comput. Programming",
-  "sicomp" => "SIAM J. Comput.",
-  "tocs" => "ACM Trans. Comput. Syst.",
-  "tods" => "ACM Trans. Database Syst.",
-  "tog" => "ACM Trans. Gr.",
-  "toms" => "ACM Trans. Math. Softw.",
-  "toois" => "ACM Trans. Office Inf. Syst.",
-  "toplas" => "ACM Trans. Prog. Lang. Syst.",
-  "tcs" => "Theoretical Comput. Sci.",
-)
-
-replaceJournal(str::String) = empty(str) ? "" : get(journalAbbrv, str, str)
-
+"""Format names in 'F.~von Last' order with BibTeX-style separators."""
 formatNames(out::Output, names::BibInternal.Names)::String = formatNamesFLast(out.fmt, names)
 
 "Format author names in small caps"
@@ -239,17 +239,6 @@ function formatInEdBooktitle(out::Output, data::BibInternal.Entry)::String
     return empty(data.editors) ?
       "in " * data.booktitle :
       "in " * data.booktitle * ", " * formatInEditors(out, data)
-  end
-end
-
-"Check if all relevant fields for the misc type are empty."
-function emptyMiscCheck(data::BibInternal.Entry)::Bool
-  if empty(data.authors) && empty(data.title) && empty(data.access.howpublished) &&
-     empty(data.date.month) && empty(data.date.year) && haskey(data.fields,"note")
-     @warn "All relevant fields are empty in $(data.id)."
-    return false
-  else
-    return true
   end
 end
 
