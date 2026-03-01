@@ -114,3 +114,13 @@ This is a title.
 This is a note.
 <a href="https://doi.org/10.1234/56.abc.123">doi:10.1234/56.abc.123</a>.</p></blockquote>
 ```
+
+### Style `Urlbst(Abbrv(); inlinelinks=true)`
+
+```@raw html
+<blockquote><p>F.&nbsp;S. von Last, Junior, F.&nbsp;M. Last2, and F.&nbsp;M. Last3.
+<a href="https://doi.org/10.1234/56.abc.123">This is a title.</a>
+<em>Journal</em>, v123(b234):1&ndash;2, mm yyyy.
+This is a note.
+<a href="https://doi.org/10.1234/56.abc.123">doi:10.1234/56.abc.123</a>.</p></blockquote>
+```
