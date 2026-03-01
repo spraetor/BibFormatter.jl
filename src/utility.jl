@@ -10,7 +10,41 @@ joinNotEmpty(s1::AbstractString, s2::AbstractString) = (!isempty(s1) && !isempty
 joinNotEmpty(s1::AbstractString, s2::AbstractString, s...) = joinNotEmpty(joinNotEmpty(s1,s2),s...)
 
 """Abbreviate a name token to its first character plus a trailing dot."""
-abbreviateName(str::AbstractString) = !isempty(str) ? str[1] * "." : ""
+function abbreviateName(str::AbstractString)
+  s = strip(str)
+  isempty(s) && return ""
+
+  # Preserve pure LaTeX control-sequence names such as "{\ss}" as one initial.
+  initial(part::AbstractString) = startswith(part, "{\\") && endswith(part, "}") ?
+    part * "." :
+    (!isempty(decodeLatexSpecialChars(part)) ? decodeLatexSpecialChars(part)[1] * "." : "")
+
+  # Hyphenated first names should become "M.-K.".
+  join(initial.(split(s, '-')), "-")
+end
+
+"""
+Lowercase text while preserving segments enclosed in `{...}` unchanged.
+
+This mirrors BibTeX title-case protection behavior used in `.bib` fields.
+Nested braces are supported.
+"""
+function lowercaseProtected(str::AbstractString)::String
+  buf = IOBuffer()
+  depth = 0
+  for c in str
+    if c == '{'
+      depth += 1
+      print(buf, c)
+    elseif c == '}'
+      depth = max(0, depth - 1)
+      print(buf, c)
+    else
+      print(buf, depth > 0 ? string(c) : lowercase(string(c)))
+    end
+  end
+  String(take!(buf))
+end
 
 """String-specific emptiness check."""
 empty(str::AbstractString) = isempty(str)

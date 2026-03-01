@@ -4,11 +4,16 @@ function formatNameFLast(fmt::OutputFormat, von, last, junior, first, second)::S
   pushNotEmpty!(firstNames, abbreviateName(strip(first)))
   pushNotEmpty!(firstNames, abbreviateName(strip(second)))
   _first = outputJoinSpace(fmt, firstNames)
+  nfirst = length(firstNames)
 
-  components = []
-  pushNotEmpty!(components, _first)
-  pushNotEmpty!(components, joinNotEmpty(von, " ") * last * joinNotEmpty(", ", junior))
-  join(components, " ")
+  surname = joinNotEmpty(von, " ") * last * joinNotEmpty(", ", junior)
+  if empty(_first)
+    surname
+  elseif empty(von) && nfirst == 1 && !occursin('-', _first)
+    outputJoinSpace(fmt, [_first, surname])
+  else
+    _first * " " * surname
+  end
 end
 
 """Format one name as `First~Second von Last, Junior`."""

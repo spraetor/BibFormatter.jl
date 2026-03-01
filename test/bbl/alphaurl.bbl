@@ -1,0 +1,122 @@
+\begin{thebibliography}{vMWOyy}
+
+\bibitem[EEEyya]{Book2}
+EFirst1~EMiddle1 ELast1, EFirst2~EMiddle2 ELast2, and EFirst3~EMiddle3 ELast3,
+  editors.
+\newblock {\em This is a title.}
+\newblock Number n234 in Series. Publisher, Address, edition edition, mm yyyy.
+\newblock This is a note.
+
+\bibitem[EEEyyb]{Proceedings1}
+EFirst1~EMiddle1 ELast1, EFirst2~EMiddle2 ELast2, and EFirst3~EMiddle3 ELast3,
+  editors.
+\newblock {\em This is a title.}, volume v123 of {\em Series}, Address, mm
+  yyyy. Organization, Publisher.
+\newblock This is a note.
+
+\bibitem[EEEyyc]{Proceedings2}
+EFirst1~EMiddle1 ELast1, EFirst2~EMiddle2 ELast2, and EFirst3~EMiddle3 ELast3,
+  editors.
+\newblock {\em This is a title.}, number n234 in Series, Address, mm yyyy.
+  Organization, Publisher.
+\newblock This is a note.
+
+\bibitem[Lasyya]{Master}
+First~Middle Last.
+\newblock This is a title.
+\newblock Type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem[Lasyyb]{PhD}
+First~Middle Last.
+\newblock {\em This is a title.}
+\newblock Type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyya]{Book1}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock {\em This is a title.}, volume v123 of {\em Series}.
+\newblock Publisher, Address, edition edition, mm yyyy.
+\newblock This is a note.
+\newblock URL: \url{https://example.org/books/book1} [cited 01 March 2026],
+  \href {https://doi.org/10.5555/book1.2026} {\path{doi:10.5555/book1.2026}}.
+
+\bibitem[LLLyyb]{Booklet}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock How it is published, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyyc]{InBook1}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock {\em This is a title}, volume v123 of {\em Series}, type Chapter,
+  pages 1--2.
+\newblock Publisher, Address, edition edition, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyyd]{InBook2}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock {\em This is a title.}, type Chapter, pages 1--2.
+\newblock Number n234 in Series. Publisher, Address, edition edition, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyye]{InCollection1}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock In EFirst1~EMiddle1 ELast1, EFirst2~EMiddle2 ELast2, and
+  EFirst3~EMiddle3 ELast3, editors, {\em Booktitle}, volume v123 of {\em
+  Series}, type Chapter, pages 1--2. Publisher, Address, edition edition, mm
+  yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyyf]{InCollection2}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock In EFirst1~EMiddle1 ELast1, EFirst2~EMiddle2 ELast2, and
+  EFirst3~EMiddle3 ELast3, editors, {\em Booktitle}, number n234 in Series,
+  type Chapter, pages 1--2. Publisher, Address, edition edition, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyyg]{Manual}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock {\em This is a title.}
+\newblock Organization, Address, edition edition, mm yyyy.
+\newblock This is a note.
+\newblock URL: \url{https://example.org/manuals/manual} [cited 01 March 2026].
+
+\bibitem[LLLyyh]{TechReport}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock Type n234, Institution, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem[LLLyyi]{Unpubished}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock This is a note, mm yyyy.
+
+\bibitem[LLLyyj]{Misc}
+First1~Middle1 Last1, First2~Middle2 Last2, and First3~Middle3 Last3.
+\newblock This is a title.
+\newblock How it is published, mm yyyy.
+\newblock This is a note.
+\newblock \href {https://doi.org/10.7777/misc.42} {\path{doi:10.7777/misc.42}}.
+
+\bibitem[vMWOyy]{Article}
+J\"{o}rg~{\ss} von M{\"u}ller, Junior, Franz Wei{\ss}, and Mary-Kate O'Neil.
+\newblock This is a {Title} with {API} and {BibTeX} case.
+\newblock {\em Journal}, v123(b234):1--2, mm yyyy.
+\newblock This is a note.
+\newblock URL: \url{https://example.org/articles/this-is-a-title} [cited 26
+  August 2009], \href {http://arxiv.org/abs/1234.56789}
+  {\path{arXiv:1234.56789}}, \href
+  {https://doi.org/https://doi.org/10.1234/56.abc.123}
+  {\path{doi:https://doi.org/10.1234/56.abc.123}}, \href
+  {http://www.ncbi.nlm.nih.gov/pubmed/34567890} {\path{PMID:34567890}}.
+
+\bibitem[Web09]{WebPage}
+The world wide web consortium [online].
+\newblock 2009.
+\newblock URL: \url{http://www.w3.org} [cited 26 August 2009].
+
+\end{thebibliography}

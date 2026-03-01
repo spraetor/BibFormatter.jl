@@ -2,6 +2,9 @@ outputAddPeriod(::OutputFormat, str::AbstractString) = endswith(str, ".") ? str 
 outputEmph(::OutputFormat, str::AbstractString) = str
 outputEmphIc(fmt::OutputFormat, str::AbstractString) = outputEmph(fmt, str)
 outputSmallCaps(::OutputFormat, str::AbstractString) = str
+outputTitleCase(::OutputFormat, str::AbstractString) = replace(str, "{" => "", "}" => "")
+preprocessInputSpecialChars(::OutputFormat, str::AbstractString) = decodeLatexSpecialChars(str)
+encodeOutputSpecialChars(::OutputFormat, str::AbstractString) = str
 outputLink(::OutputFormat, href::AbstractString, text::AbstractString) = text
 outputQuote(::OutputFormat, str::AbstractString) = "\"$str\""
 outputJoinSpace(::OutputFormat, list::AbstractVector) = join(list, " ")

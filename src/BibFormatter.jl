@@ -6,6 +6,7 @@ abstract type BibliographyStyle end
 abstract type OutputFormat end
 
 # some utilities and default formatting
+include("specialsymbol.jl")
 include("utility.jl")
 include("output.jl")
 include("names.jl")

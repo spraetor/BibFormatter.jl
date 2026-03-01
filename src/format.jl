@@ -1,7 +1,13 @@
 using Logging
 import BibInternal
 
-formatBlock(fmt::OutputFormat, block::AbstractString) = outputAddPeriod(fmt, uppercasefirst(strip(block)))
+function formatBlock(fmt::OutputFormat, block::AbstractString)
+  s = strip(block)
+  s = preprocessInputSpecialChars(fmt, s)
+  s = uppercasefirst(s)
+  s = encodeOutputSpecialChars(fmt, s)
+  outputAddPeriod(fmt, s)
+end
 formatBlocks(fmt::OutputFormat, style::BibliographyStyle, blocks::Nothing) = "Not implemented"
 formatBlocks(fmt::OutputFormat, ::BibliographyStyle, blocks::AbstractVector) = outputBlocks(fmt, map((b) -> formatBlock(fmt,b), blocks))
 

@@ -3,7 +3,7 @@ struct Siam <: BibliographyStyle end
 
 module BibliographyStyleSiam
 
-using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNameFLast, formatNamesFLast, outputAddPeriod, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNameFLast, formatNamesFLast, lowercaseProtected, outputAddPeriod, outputTitleCase, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 function outputCheck!(arr::AbstractVector{T}, str::AbstractString, msg::AbstractString) where T
@@ -132,7 +132,7 @@ end
 
 "Emphasize the title and convert it into sentence-case."
 function formatTitle(out::Output, data::BibInternal.Entry)::String
-  empty(data.title) ? "" : emphasize(out.fmt, uppercasefirst(lowercase(data.title)))
+  empty(data.title) ? "" : emphasize(out.fmt, outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title))))
 end
 
 "Emphasize the title."

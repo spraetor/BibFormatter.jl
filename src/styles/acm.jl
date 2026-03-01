@@ -2,7 +2,7 @@ struct Acm <: BibliographyStyle end
 
 module BibliographyStyleAcm
 
-using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, emphasizeic, formatNameFLast, formatNameLastF, outputAddPeriod, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, emphasizeic, formatNameFLast, formatNameLastF, lowercaseProtected, outputAddPeriod, outputTitleCase, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 @enum OutputState begin
@@ -152,7 +152,7 @@ function formatInEditors(out::Output, data::BibInternal.Entry)::String
 end
 
 """Convert title to sentence-case."""
-formatTitle(out::Output, data::BibInternal.Entry)::String = empty(data.title) ? "" : uppercasefirst(lowercase(data.title))
+formatTitle(out::Output, data::BibInternal.Entry)::String = empty(data.title) ? "" : outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title)))
 """Emphasize book-like titles."""
 formatBTitle(out::Output, data::BibInternal.Entry)::String = emphasize(out.fmt, data.title)
 

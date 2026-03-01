@@ -1,0 +1,89 @@
+\begin{thebibliography}{10}
+
+\bibitem{WebPage}
+{\em The world wide web consortium}, 2009.
+
+\bibitem{Book2}
+{\sc E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3}, eds., {\em This is a
+  title.}, no.~n234 in Series, Publisher, Address, edition~ed., mm yyyy.
+\newblock This is a note.
+
+\bibitem{Proceedings1}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, eds., {\em This is a
+  title.}, vol.~v123 of Series, Address, mm yyyy, Organization, Publisher.
+\newblock This is a note.
+
+\bibitem{Proceedings2}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, eds., {\em This is a
+  title.}, no.~n234 in Series, Address, mm yyyy, Organization, Publisher.
+\newblock This is a note.
+
+\bibitem{Master}
+{\sc F.~M. Last}, {\em This is a title.}, type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{PhD}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Book1}
+{\sc F.~M. Last1, F.~M. Last2, and F.~M. Last3}, {\em This is a title.},
+  vol.~v123 of Series, Publisher, Address, edition~ed., mm yyyy.
+\newblock This is a note.
+
+\bibitem{Booklet}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.}
+\newblock How it is published, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{InBook1}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title},
+  vol.~v123 of Series, Publisher, Address, edition~ed., mm yyyy, type Chapter,
+  pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InBook2}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  no.~n234 in Series, Publisher, Address, edition~ed., mm yyyy, type Chapter,
+  pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InCollection1}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  in Booktitle, E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3, eds., vol.~v123
+  of Series, Publisher, Address, edition~ed., mm yyyy, type Chapter, pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InCollection2}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  in Booktitle, E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3, eds., no.~n234 in
+  Series, Publisher, Address, edition~ed., mm yyyy, type Chapter, pp.~1--2.
+\newblock This is a note.
+
+\bibitem{Manual}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  Organization, Address, edition~ed., mm yyyy.
+\newblock This is a note.
+
+\bibitem{TechReport}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.},
+  Type n234, Institution, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Unpubished}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.}
+\newblock This is a note, mm yyyy.
+
+\bibitem{Misc}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em This is a title.}
+\newblock How it is published, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Article}
+{\sc J.~{\ss}. von M{\"u}ller, Junior, F.~Wei{\ss}, and M.-K. O'Neil}, {\em
+  This is a {Title} with {API} and {BibTeX} case.}, Journal, v123 (yyyy),
+  pp.~1--2.
+\newblock This is a note.
+
+\end{thebibliography}

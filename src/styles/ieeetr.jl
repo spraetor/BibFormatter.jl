@@ -2,7 +2,7 @@ struct Ieeetr <: BibliographyStyle end
 
 module BibliographyStyleIeeetr
 
-using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNameFLast, outputAddPeriod, outputQuote, replaceMonth, tieConnect, tieOrSpaceConnect
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNameFLast, lowercaseProtected, outputAddPeriod, outputTitleCase, outputQuote, replaceMonth, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 @enum OutputState begin
@@ -129,12 +129,12 @@ end
 
 """Format article-like titles as quoted sentence-case text ending with a comma."""
 function formatTitle(out::Output, data::BibInternal.Entry)::String
-  empty(data.title) ? "" : outputQuote(out.fmt, uppercasefirst(lowercase(data.title)) * ",")
+  empty(data.title) ? "" : outputQuote(out.fmt, outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title))) * ",")
 end
 
 """Format article-like titles as quoted sentence-case text ending with a period."""
 function formatTitleP(out::Output, data::BibInternal.Entry)::String
-  empty(data.title) ? "" : outputQuote(out.fmt, uppercasefirst(lowercase(data.title)) * ".")
+  empty(data.title) ? "" : outputQuote(out.fmt, outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title))) * ".")
 end
 
 """Format date as '[mm ]yyyy'."""

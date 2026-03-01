@@ -2,7 +2,7 @@ struct Abbrv <: BibliographyStyle end
 
 module BibliographyStyleAbbrv
 
-using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNamesFLast, outputAddPeriod, replaceJournalAbbrv, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
+using ...BibFormatter: OutputFormat, dashify, empty, emptyMiscCheck, emphasize, formatNamesFLast, lowercaseProtected, outputAddPeriod, outputTitleCase, replaceJournalAbbrv, replaceMonth, scapify, tieConnect, tieOrSpaceConnect
 import BibInternal
 
 @enum OutputState begin
@@ -96,7 +96,7 @@ end
 
 """Convert the title into sentence-case."""
 function formatTitle(out::Output, data::BibInternal.Entry)::String
-  empty(data.title) ? "" : uppercasefirst(lowercase(data.title))
+  empty(data.title) ? "" : outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title)))
 end
 
 """Emphasize the title."""

@@ -1,0 +1,106 @@
+\begin{thebibliography}{10}
+
+\bibitem{WebPage}
+The world wide web consortium, 2009.
+
+\bibitem{Book2}
+{\sc ELast1, E.~E., ELast2, E.~E., and ELast3, E.~E.}, Eds.
+\newblock {\em This is a title.}, edition~ed.
+\newblock No.~n234 in Series. Publisher, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Proceedings1}
+{\sc ELast1, E.~E., ELast2, E.~E., and ELast3, E.~E.}, Eds.
+\newblock {\em This is a title.\/} (Address, mm yyyy), vol.~v123 of {\em
+  Series}, Organization, Publisher.
+\newblock This is a note.
+
+\bibitem{Proceedings2}
+{\sc ELast1, E.~E., ELast2, E.~E., and ELast3, E.~E.}, Eds.
+\newblock {\em This is a title.\/} (Address, mm yyyy), no.~n234 in Series,
+  Organization, Publisher.
+\newblock This is a note.
+
+\bibitem{Master}
+{\sc Last, F.~M.}
+\newblock This is a title.
+\newblock Type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{PhD}
+{\sc Last, F.~M.}
+\newblock {\em This is a title.}
+\newblock Type, School, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Book1}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock {\em This is a title.}, edition~ed., vol.~v123 of {\em Series}.
+\newblock Publisher, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Booklet}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock How it is published, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{InBook1}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock {\em This is a title}, edition~ed., vol.~v123 of {\em Series}.
+\newblock Publisher, Address, mm yyyy, type Chapter, pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InBook2}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock {\em This is a title.}, edition~ed.
+\newblock No.~n234 in Series. Publisher, Address, mm yyyy, type Chapter,
+  pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InCollection1}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock In {\em Booktitle}, E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3,
+  Eds., edition~ed., vol.~v123 of {\em Series}. Publisher, Address, mm yyyy,
+  type Chapter, pp.~1--2.
+\newblock This is a note.
+
+\bibitem{InCollection2}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock In {\em Booktitle}, E.~E. ELast1, E.~E. ELast2, and E.~E. ELast3,
+  Eds., edition~ed., no.~n234 in Series. Publisher, Address, mm yyyy, type
+  Chapter, pp.~1--2.
+\newblock This is a note.
+
+\bibitem{Manual}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock {\em This is a title.}, edition~ed.
+\newblock Organization, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{TechReport}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock Type n234, Institution, Address, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Unpubished}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock This is a note, mm yyyy.
+
+\bibitem{Misc}
+{\sc Last1, F.~M., Last2, F.~M., and Last3, F.~M.}
+\newblock This is a title.
+\newblock How it is published, mm yyyy.
+\newblock This is a note.
+
+\bibitem{Article}
+{\sc von M{\"u}ller, Junior, J.~{\ss}., Wei{\ss}, F., and O'Neil, M.-K.}
+\newblock This is a {Title} with {API} and {BibTeX} case.
+\newblock {\em Journal v123}, b234 (mm yyyy), 1--2.
+\newblock This is a note.
+
+\end{thebibliography}

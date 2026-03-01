@@ -2,7 +2,7 @@ struct Apalike <: BibliographyStyle end
 
 module BibliographyStyleApalike
 
-using ...BibFormatter: OutputFormat, dashify, empty, emphasize, formatNameLastF, outputAddPeriod, tieOrSpaceConnect
+using ...BibFormatter: OutputFormat, dashify, empty, emphasize, formatNameLastF, lowercaseProtected, outputAddPeriod, outputTitleCase, tieOrSpaceConnect
 import BibInternal
 
 @enum OutputState begin
@@ -124,7 +124,7 @@ end
 """Use the BibTeX key only when the corresponding name list is empty."""
 formatKey(data::BibInternal.Entry, names::BibInternal.Names)::String = empty(names) ? get(data.fields, "key", "") : ""
 """Convert title to sentence-case."""
-formatTitle(out::Output, data::BibInternal.Entry)::String = empty(data.title) ? "" : uppercasefirst(lowercase(data.title))
+formatTitle(out::Output, data::BibInternal.Entry)::String = empty(data.title) ? "" : outputTitleCase(out.fmt, uppercasefirst(lowercaseProtected(data.title)))
 """Emphasize book-like titles."""
 formatBTitle(out::Output, data::BibInternal.Entry)::String = emphasize(out.fmt, data.title)
 
