@@ -2,7 +2,6 @@ using BibFormatter: format
 using Test
 
 @testset "Latex output" begin
-
   entry = bibFile["Article"]
   expected = raw"""
 J.~{\ss}. von M{\\\"u}ller, Junior, F.~Wei{\ss}, and M.-K. O'Neil.
@@ -20,10 +19,7 @@ J.~{\ss}. von M{\\\"u}ller, Junior, F.~Wei{\ss}, and M.-K. O'Neil.
   @test normalizeBibitem(expected) == normalizeBibitem(actual)
 end
 
-"J.~{\\ss}. von M{\\\"u}ller, Junior, F.~Wei{\\ss}, and M.-K. O'Neil. \\newblock This is a {Title} with {API} and {BibTeX} case. \\newblock {\\em Journal}, v123(b234):1--2, mm yyyy. \\newblock This is a note. \\newblock URL: \\url{https://example.org/articles/this-is-a-title} [cited 26 August 2009]. \\newblock \\href{http://arxiv.org/abs/1234.56789}{arXiv:1234.56789}. \\newblock \\href{https://doi.org/10.1234/56.abc.123}{doi:10.1234/56.abc.123}. \\newblock \\href{http://www.ncbi.nlm.nih.gov/pubmed/34567890}{PMID:34567890}." == "J.~{\\ss}. von M{\"u}ller, Junior, F.~Wei{\\ss}, and M.-K. O'Neil. \\newblock This is a {Title} with {API} and {BibTeX} case. \\newblock {\\em Journal}, v123(b234):1--2, mm yyyy. \\newblock This is a note. \\newblock URL: \\href{https://example.org/articles/this-is-a-title}{https://example.org/articles/this-is-a-title} [cited 26 August 2009]. \\newblock \\href{http://arxiv.org/abs/1234.56789}{arXiv:1234.56789}. \\newblock \\href{https://doi.org/10.1234/56.abc.123}{doi:10.1234/56.abc.123}. \\newblock \\href{http://www.ncbi.nlm.nih.gov/pubmed/34567890}{PMID:34567890}."
-
 @testset "HTML output" begin
-
   entry = bibFile["Article"]
   expected = raw"""
 J.&nbsp;&szlig;. von M&uuml;ller, Junior, F.&nbsp;Wei&szlig;, and M.-K. O'Neil.
@@ -40,7 +36,6 @@ end
 
 
 @testset "Text output" begin
-
   entry = bibFile["Article"]
   expected = raw"""
 J. ß. von Müller, Junior, F. Weiß, and M.-K. O'Neil.
@@ -57,7 +52,6 @@ end
 
 
 @testset "Markdown output" begin
-
   entry = bibFile["Article"]
   expected = raw"""
 J. ß. von Müller, Junior, F. Weiß, and M.-K. O'Neil.
