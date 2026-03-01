@@ -1,0 +1,179 @@
+\begin{thebibliography}{10}
+
+\bibitem{BE90}
+J.~Berntsen and T.~O. Espelid.
+\newblock Degree 13 symmetric quadrature rules for the triangle.
+\newblock Technical Report~44, Department of Informatics. University of Bergen,
+  1990.
+
+\bibitem{CCGV22}
+G.~Chuluunbaatar, O.~Chuluunbaatar, A.~A. Gusev, and S.~I. Vinitsky.
+\newblock Pi-type fully symmetric quadrature rules on the 3-,$\ldots$,
+  6-simplexes.
+\newblock {\em Computer \& Mathematics with Applications}, 124:89--97, 2022.
+
+\bibitem{CH87b}
+R.~Cools and A.~Haegemans.
+\newblock Construction of minimal cubature formulae for the square and the
+  triangle, using invariant theory.
+\newblock Technical report, Katholieke Universiteit Leuven. Departement
+  Computerwetenschappen, 1987.
+
+\bibitem{Dun85a}
+D.~A. Dunavant.
+\newblock Economical symmetric quadrature rules for complete polynomials over a
+  square domain.
+\newblock {\em J. Numer. Methods Engrg.}, 21:1777--1784, 1985.
+
+\bibitem{Fra71a}
+R.~Franke.
+\newblock Obtaining cubatures for rectangles and other planar regions by using
+  orthogonal polynomials.
+\newblock {\em Math. Comp.}, 25(116):803--817, 1971.
+
+\bibitem{Gat88}
+K.~Gatermann.
+\newblock The construction of symmetric cubature formulas for the square and
+  the triangle.
+\newblock {\em Computing}, 40:229--240, 1988.
+
+\bibitem{Gun75}
+C.~G{\"u}nther.
+\newblock Zweidimensionale quadraturformeln vom grad 7 mit 14 punkten.
+\newblock {\em Numerische Mathematik}, 24:309--316, 1975.
+
+\bibitem{HX99}
+S.~Heo and Y.~Xu.
+\newblock {\em Advances in computational mathematics}, chapter Constructing
+  Symmetric Cubature Formulae on a Triangle, pages 203--221.
+\newblock New York, 1999.
+
+\bibitem{Hil77}
+P.~Hillion.
+\newblock Numerical integration on a triangle.
+\newblock {\em Internat. J. Numer. Methods Engrg.}, 11:797--815, 1977.
+
+\bibitem{JS21}
+J.~Ja\'{s}kowiec and N.~Sukumar.
+\newblock High-order symmetric cubature rules for tetrahedra and pyramids.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  122(1):148--171, 2021.
+
+\bibitem{LG78}
+M.~E. Laursen and M.~Gellert.
+\newblock Some criteria for numerically integrated matrices and quadrature
+  formulas for triangles.
+\newblock {\em Internat. J. Numer. Methods Engrg.}, 12:67--76, 1978.
+
+\bibitem{LJ75}
+J.~N. Lyness and D.~Jespersen.
+\newblock Moderate degree symmetric quadrature rules for the triangle.
+\newblock {\em J. Inst. Math. Appl.}, 15(1):19--32, 1975.
+
+\bibitem{Pap15}
+S.-A. Papanicolopulos.
+\newblock Computation of moderate-degree fully-symmetric cubature rules on the
+  triangle using symmetric polynomials and algebraic solving.
+\newblock {\em Computers \& Mathematics with Applications}, 69:650--666, 2015.
+
+\bibitem{Pap16}
+S.-A. Papanicolopulos.
+\newblock New fully symmetric and rotationally symmetric cubature rules on the
+  triangle using minimal orthonormal bases.
+\newblock {\em Journal of Computational and Applied Mathematics}, 294:39--48,
+  2016.
+
+\bibitem{Phi79}
+G.~M. Phillips.
+\newblock Seventh degree integration rules for the cube.
+\newblock {\em BIT Numerical Mathematics}, 19:98--103, 1979.
+
+\bibitem{Phi80b}
+G.~M. Phillips.
+\newblock A survey of one-dimensional and multidimensional numerical
+  integration.
+\newblock {\em Computer Physics Communications}, 20:17--27, 1980.
+
+\bibitem{Phi81}
+G.~M. Phillips.
+\newblock Seventh degree integration rules for r^3.
+\newblock {\em BIT Numerical Mathematics}, 21:126--128, 1981.
+
+\bibitem{PH75b}
+R.~Piessens and A.~Haegemans.
+\newblock Cubature formulas of degree nine for symmetric planar regions.
+\newblock {\em Mathematics of Computation}, 29(131):810--815, 1975.
+
+\bibitem{RKEB87}
+P.~Rabinowitz, J.~Kautsky, S.~Elhay, and J.~C. Butcher.
+\newblock On sequences of imbedded integration rules.
+\newblock {\em Numerical Integration}, 203:113--139, 1987.
+
+\bibitem{Ras86}
+G.~G. Rasputin.
+\newblock Construction of cubature formulas containing preassigned nodes.
+\newblock {\em Izv. Vyssh. Uchebn. Zaved. Mat.}, 11:44--51, 1986.
+
+\bibitem{Sch78}
+H.~J. Schmid.
+\newblock On cubature formulae with a minimal number of knots.
+\newblock {\em Numer. Math.}, 31:281--297, 1978.
+
+\bibitem{Sch83}
+H.~J. Schmid.
+\newblock {\em Interpolatorische Kubaturformeln}.
+\newblock PhD thesis, Instytut Matematyczny Polskiej Akademii Nauk, 1983.
+
+\bibitem{Str71}
+A.~H. Stroud.
+\newblock {\em Approximate calculation of multiple integrals}.
+\newblock Prentice-Hall series in automatic computation. Prentice-Hall, 1995.
+
+\bibitem{Ver93}
+P.~Verlinden.
+\newblock {\em Cubature formulas and asymptotic expansions}.
+\newblock PhD thesis, Katholieke Universiteit Leuven, 1993.
+
+\bibitem{VC91}
+P.~Verlinden and R.~Cools.
+\newblock A cubature formula of degree 19 with 68 nodes for integration over
+  the square.
+\newblock Technical Report TW 149, Dept. of Computer Science, K.U. Leuven,
+  1991.
+
+\bibitem{Wal95}
+S.~Waldron.
+\newblock {\em Approximation Theory VIII}, chapter Symmetries of Linear
+  Functionals, pages 541--550.
+\newblock World Scientific Publishing Co., Inc., 1995.
+
+\bibitem{WX2003}
+S.~Wandzura and H.~Xiao.
+\newblock Symmetric quadrature rules on a triangle.
+\newblock {\em Computers and Mathematics with Applications}, 45:1829--1840,
+  2003.
+
+\bibitem{WB86}
+J.~W. Wissman and T.~Becker.
+\newblock Partially symmetric cubature formulas for even degrees of exactness.
+\newblock {\em SIAM J. Numer. Anal.}, 23:676--685, 1986.
+
+\bibitem{WV15}
+F.~D. Witherden and P.~E. Vincent.
+\newblock On the identification of symmetric quadrature rules for finite
+  element methods.
+\newblock {\em Computers \& Mathematics with Applications}, 69, 2015.
+
+\bibitem{XG10}
+H.~Xiao and Z.~Gimbutas.
+\newblock A numerical algorithm for the construction of efficient quadrature
+  rules in two and higher dimensions.
+\newblock {\em Computers \& Mathematics with Applications}, 59(2):663--676,
+  2010.
+
+\bibitem{ZCL09}
+L.~Zhang, T.~Cui, and H.~Liu.
+\newblock A set of symmetric quadrature rules on triangles and tetrahedra.
+\newblock {\em Journal of Computational Mathematics}, 27(1):89--96, 2009.
+
+\end{thebibliography}

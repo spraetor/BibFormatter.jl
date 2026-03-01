@@ -16,7 +16,6 @@ include("journals.jl")
 include("urls.jl")
 include("format.jl")
 
-
 # include the implementation of several bibtex styles
 include("styles/abbrv.jl")
 include("styles/acm.jl")
@@ -93,6 +92,9 @@ function OutputFormat(fmt::Symbol)
   return formats[fmt]
 end
 
+# helpers to render full bibliography/library outputs
+include("printlibrary.jl")
+
 
 "Format a bibtex entry into a string using the given bibtex style"
 function format(data::BibInternal.Entry; style::Symbol = :abbrv, fmt::Symbol = :text)::String
@@ -107,5 +109,6 @@ end
 
 export BibliographyStyle, OutputFormat, OutputFormatLatex, OutputFormatHtml, OutputFormatText
 export format
+export printLibrary
 
 end # module BibFormatter

@@ -93,11 +93,11 @@ function formatNames(out::Output, names::BibInternal.Names)::String
       else
         if numnames > 2
           outstr *= ","
-          if t == "others"
-            outstr *= " " * tieConnect(out.fmt, ["et", "al."]) # et~al.
-          else
-            outstr *= " and " * t
-          end
+        end
+        if t == "others"
+          outstr *= " " * tieConnect(out.fmt, ["et", "al."]) # et~al.
+        else
+          outstr *= " and " * t
         end
       end
     else

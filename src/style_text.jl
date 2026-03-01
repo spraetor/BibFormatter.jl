@@ -12,7 +12,11 @@ emphasizeic(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputEm
 """Apply output-format-specific small-caps styling and return empty string for empty input."""
 scapify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputSmallCaps(fmt, str)
 """Normalize numeric ranges using output-format-specific range separators."""
-dashify(fmt::OutputFormat, str::AbstractString) = empty(str) ? "" : outputNumberRange(fmt, split(str, '-'))
+function dashify(fmt::OutputFormat, str::AbstractString)
+  empty(str) && return ""
+  parts = split(strip(str), r"\s*(?:--+|[-–—])\s*")
+  length(parts) > 1 ? outputNumberRange(fmt, parts) : str
+end
 
 """Join tokens using output-format-specific non-breaking spacing."""
 tieConnect(fmt::OutputFormat, arr::AbstractVector) = outputJoinSpace(fmt, arr)

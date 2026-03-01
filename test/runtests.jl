@@ -11,6 +11,7 @@ const bibFile = BibParser.parse_file(bibFilename; check=:none)
 include("output.jl")
 include("specialsymbol.jl")
 include("bbl_compare.jl")
+include("references2.jl")
 
 include("printlibrary.jl")
 

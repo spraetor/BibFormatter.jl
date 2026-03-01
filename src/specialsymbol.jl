@@ -115,11 +115,80 @@ end
 
 const _latexSpecialReplacements = _buildLatexSpecialReplacements()
 
+"""Return index of the next unescaped `\$` delimiter or `nothing`."""
+function _findUnescapedDollar(str::AbstractString, start::Int)
+  i = start
+  while i <= lastindex(str)
+    if str[i] == '$'
+      # A dollar is escaped when preceded by an odd number of backslashes.
+      bs = 0
+      j = prevind(str, i)
+      while j >= firstindex(str) && str[j] == '\\'
+        bs += 1
+        j = j == firstindex(str) ? 0 : prevind(str, j)
+      end
+      iseven(bs) && return i
+    end
+    i = nextind(str, i)
+  end
+  nothing
+end
+
+"""
+    protectMathBlocks(str) -> (masked, placeholders)
+
+Replace `\$...\$` and `\\(...\\)` math blocks by UUID placeholders so text-level
+symbol replacement can run safely outside math content.
+"""
+function protectMathBlocks(str::AbstractString)::Tuple{String,Dict{String,String}}
+  placeholders = Dict{String,String}()
+  tokenCounter = 0
+  out = IOBuffer()
+  i = firstindex(str)
+  while i <= lastindex(str)
+    if str[i] == '$'
+      j = _findUnescapedDollar(str, nextind(str, i))
+      if j !== nothing
+        tokenCounter += 1
+        token = "__BIBFMT_MATH_BLOCK_" * string(tokenCounter) * "__"
+        placeholders[token] = str[i:j]
+        print(out, token)
+        i = nextind(str, j)
+        continue
+      end
+    elseif startswith(SubString(str, i), raw"\(")
+      afterOpen = nextind(str, nextind(str, i))
+      closeRange = findnext(raw"\)", str, afterOpen)
+      if closeRange !== nothing
+        tokenCounter += 1
+        token = "__BIBFMT_MATH_BLOCK_" * string(tokenCounter) * "__"
+        placeholders[token] = str[i:last(closeRange)]
+        print(out, token)
+        i = nextind(str, last(closeRange))
+        continue
+      end
+    end
+
+    print(out, str[i])
+    i = nextind(str, i)
+  end
+  String(take!(out)), placeholders
+end
+
+"""Restore placeholders produced by [`protectMathBlocks`](@ref)."""
+function restoreMathBlocks(str::AbstractString, placeholders::Dict{String,String})::String
+  out = String(str)
+  for (token, block) in placeholders
+    out = replace(out, token => block)
+  end
+  out
+end
+
 """Decode common LaTeX special-character encodings to Unicode."""
 function decodeLatexSpecialChars(str::AbstractString)::String
-  out = String(str)
+  out, placeholders = protectMathBlocks(str)
   for (pat, repl) in _latexSpecialReplacements
     out = replace(out, pat => repl)
   end
-  out
+  restoreMathBlocks(out, placeholders)
 end

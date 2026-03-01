@@ -12,7 +12,7 @@ outputEmph(::OutputFormatLatex, str::AbstractString) = "{\\em $str}"
 outputEmphIc(fmt::OutputFormatLatex, str::AbstractString) = outputEmph(fmt, str * "\\/")
 outputSmallCaps(::OutputFormatLatex, str::AbstractString) = "{\\sc $str}"
 outputTitleCase(::OutputFormatLatex, str::AbstractString) = str
-preprocessInputSpecialChars(::OutputFormatLatex, str::AbstractString) = str
+preprocessInputSpecialChars(::OutputFormatLatex, str::AbstractString) = decodeLatexSpecialChars(str)
 function encodeOutputSpecialChars(::OutputFormatLatex, str::AbstractString)
   replace(str,
     "ä" => "{\\\"a}", "Ä" => "{\\\"A}",

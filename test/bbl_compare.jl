@@ -3,7 +3,11 @@ using Test
 import Base.Filesystem
 
 """Normalize bibitem text for robust comparisons across line-wrapping differences."""
-normalizeBibitem(str::AbstractString) = strip(replace(str, r"\s+" => " "))
+function normalizeBibitem(str::AbstractString)
+  s = strip(replace(str, r"\s+" => " "))
+  # Treat equivalent TeX accent forms as identical, e.g. \"{o} == {\"o}.
+  replace(s, r"\\([\"'`^~])\{([A-Za-z])\}" => s"{\\\1\2}")
+end
 
 function normalizeBibitem(str::AbstractString, style::Symbol)
   s = normalizeBibitem(str)
@@ -46,9 +50,8 @@ function extractBibitem(bbl::AbstractString, key::AbstractString)::String
   strip(m.captures[1])
 end
 
-"""Compare all entries for one style against `test/bbl/<style>.bbl`."""
-function testStyleAgainstBbl(entries::AbstractDict{String,E}, style::Symbol) where E
-  bblPath = Filesystem.joinpath(@__DIR__, "bbl", string(style) * ".bbl")
+"""Compare all entries for one style against a given `.bbl` fixture path."""
+function testStyleAgainstBbl(entries::AbstractDict{String,E}, style::Symbol, bblPath::AbstractString) where E
   @test isfile(bblPath)
   bbl = read(bblPath, String)
 

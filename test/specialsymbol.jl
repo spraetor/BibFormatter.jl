@@ -43,6 +43,12 @@ const unicodeSymbols = [
     @test mdOut == unicodeChar
     @test textOut == unicodeChar
   end
+
+  @testset "Math blocks are preserved during decode" begin
+    @test decodeLatexSpecialChars(raw"Text \ss and $\ldots$") == raw"Text ß and $\ldots$"
+    @test decodeLatexSpecialChars(raw"Text \ss and \(\ldots\)") == raw"Text ß and \(\ldots\)"
+    @test decodeLatexSpecialChars(raw"$\{\l\}$ and {\ss}") == raw"$\{\l\}$ and ß"
+  end
 end
 
 end # module SpecialSymbolTest
