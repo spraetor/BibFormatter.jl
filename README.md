@@ -42,13 +42,17 @@ F.~S. von Last, Junior, F.~M. Last2, and F.~M. Last3.
 ## Available bibliography styles:
 
 - `:abbrv`
+- `:abbrvurl`
 - `:acm`
 - `:alpha` (alias of `:plain`)
+- `:alphaurl`
 - `:apalike`
 - `:ieeetr`
 - `:plain`
+- `:plainurl`
 - `:siam`
 - `:unsrt` (alias of `:plain`)
+- `:unsrturl`
 
 ## Available output formats:
 
