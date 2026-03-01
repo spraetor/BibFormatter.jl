@@ -43,11 +43,13 @@ function encodeOutputSpecialChars(::OutputFormatLatex, str::AbstractString)
     "î" => "{\\^i}", "Î" => "{\\^I}",
     "ñ" => "{\\~n}", "Ñ" => "{\\~N}",
     "ń" => "{\\'n}", "Ń" => "{\\'N}",
+    "ś" => "{\\'s}", "Ś" => "{\\'S}",
     "ç" => "{\\c{c}}", "Ç" => "{\\c{C}}",
     "ł" => "{\\l}", "Ł" => "{\\L}",
     "ý" => "{\\'y}", "Ý" => "{\\'Y}",
     "ÿ" => "{\\\"y}", "Ÿ" => "{\\\"Y}",
     "ß" => "{\\ss}",
+    "&" => "\\&",
   )
 end
 outputLink(::OutputFormatLatex, href::AbstractString, text::AbstractString) = "\\href{$href}{$text}"

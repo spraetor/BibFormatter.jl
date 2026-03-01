@@ -42,6 +42,8 @@ function _buildLatexSpecialReplacements()
     ("'", "Y", "Ý"),   # matches acute-Y commands
     ("'", "n", "ń"),   # matches acute-n commands
     ("'", "N", "Ń"),   # matches acute-N commands
+    ("'", "s", "ś"),   # matches acute-s commands
+    ("'", "S", "Ś"),   # matches acute-S commands
 
     ("`", "a", "à"),   # matches grave-a commands
     ("`", "A", "À"),   # matches grave-A commands
@@ -84,6 +86,9 @@ function _buildLatexSpecialReplacements()
   push!(rules, "\\c{c}" => "ç")    # matches unbraced cedilla-c
   push!(rules, "{\\c{C}}" => "Ç")  # matches braced cedilla-C
   push!(rules, "\\c{C}" => "Ç")    # matches unbraced cedilla-C
+  push!(rules, "{\\&}" => "&")     # matches braced escaped ampersand
+  push!(rules, "\\&{}" => "&")     # matches escaped ampersand with empty braces
+  push!(rules, "\\&" => "&")       # matches escaped ampersand
 
   macroRules = [
     ("oe", "œ"),  # matches oe ligature commands
