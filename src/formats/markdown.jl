@@ -8,6 +8,8 @@ function outputAddPeriod(::OutputFormatMarkdown, str::AbstractString)
   end
 end
 
+encodeOutputSpecialChars(::OutputFormatMarkdown, str::AbstractString) = replace(str, "__AND__" => "&")
+
 outputEmph(::OutputFormatMarkdown, str::AbstractString) = "*$str*"
 outputSmallCaps(::OutputFormatMarkdown, str::AbstractString) = "<span class=\"smallcaps\">$str</span>"
 outputLink(::OutputFormatMarkdown, href::AbstractString, text::AbstractString) = "[$text]($href)"

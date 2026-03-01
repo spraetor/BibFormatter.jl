@@ -57,6 +57,8 @@ function postprocessBlocks(fmt::OutputFormat, style::Urlbst, data::BibInternal.E
     end
   end
 
+  # TODO: actually, all urls are appended as one block. It might be better represented as a sentence
+
   append!(out, formatWebReferences(
     fmt, style.vars, data;
     inlinelinks=style.inlinelinks,

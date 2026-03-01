@@ -86,9 +86,9 @@ function _buildLatexSpecialReplacements()
   push!(rules, "\\c{c}" => "ç")    # matches unbraced cedilla-c
   push!(rules, "{\\c{C}}" => "Ç")  # matches braced cedilla-C
   push!(rules, "\\c{C}" => "Ç")    # matches unbraced cedilla-C
-  push!(rules, "{\\&}" => "&")     # matches braced escaped ampersand
-  push!(rules, "\\&{}" => "&")     # matches escaped ampersand with empty braces
-  push!(rules, "\\&" => "&")       # matches escaped ampersand
+  push!(rules, "{\\&}" => "__AND__")     # matches braced escaped ampersand
+  push!(rules, "\\&{}" => "__AND__")     # matches escaped ampersand with empty braces
+  push!(rules, "\\&" => "__AND__")       # matches escaped ampersand
 
   macroRules = [
     ("oe", "œ"),  # matches oe ligature commands

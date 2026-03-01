@@ -45,8 +45,7 @@ function encodeOutputSpecialChars(::OutputFormatHtml, str::AbstractString)
     "ł" => "&#322;", "Ł" => "&#321;",
     "ý" => "&yacute;", "Ý" => "&Yacute;",
     "ÿ" => "&yuml;", "Ÿ" => "&#376;",
-    "ß" => "&szlig;",
-    "&" => "&amp;",
+    "ß" => "&szlig;", "__AND__" => "&amp;"
   )
 end
 outputLink(::OutputFormatHtml, href::AbstractString, text::AbstractString) = "<a href=\"$href\">$text</a>"
