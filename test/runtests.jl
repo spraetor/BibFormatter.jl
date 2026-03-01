@@ -6,7 +6,7 @@ const outputDir = Filesystem.joinpath(@__DIR__,"output")
 Filesystem.mkpath(outputDir)
 
 const bibFilename = Filesystem.joinpath(@__DIR__,"references.bib")
-const bibFile = BibParser.parse_file(bibFilename)
+const bibFile = BibParser.parse_file(bibFilename; check=:none)
 
 include("output.jl")
 
@@ -21,3 +21,5 @@ include("styles/ieeetr.jl")
 include("styles/siam.jl")
 include("styles/plain.jl")
 include("styles/unsrt.jl")
+include("styles/abbrvurl.jl")
+include("styles/urlbst.jl")

@@ -18,6 +18,7 @@ Modules = [BibFormatter]
 Modules = [
     BibFormatter,
     BibFormatter.BibliographyStyleAbbrv,
+    BibFormatter.BibliographyStyleUrlbst,
     BibFormatter.BibliographyStyleAcm,
     BibFormatter.BibliographyStyleApalike,
     BibFormatter.BibliographyStyleIeeetr,
@@ -34,6 +35,7 @@ Private = true
 Modules = [
     BibFormatter,
     BibFormatter.BibliographyStyleAbbrv,
+    BibFormatter.BibliographyStyleUrlbst,
     BibFormatter.BibliographyStyleAcm,
     BibFormatter.BibliographyStyleApalike,
     BibFormatter.BibliographyStyleIeeetr,

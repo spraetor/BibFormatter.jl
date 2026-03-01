@@ -10,6 +10,7 @@ end
 
 outputEmph(::OutputFormatHtml, str::AbstractString) = "<em>$str</em>"
 outputSmallCaps(::OutputFormatHtml, str::AbstractString) = "<span class=\"smallcaps\">$str</span>"
+outputLink(::OutputFormatHtml, href::AbstractString, text::AbstractString) = "<a href=\"$href\">$text</a>"
 outputQuote(::OutputFormatHtml, str::AbstractString) = "&ldquo;$str&rdquo;"
 outputJoinSpace(::OutputFormatHtml, list::AbstractVector) = join(list, "&nbsp;")
 outputNumberRange(::OutputFormatHtml, pair::AbstractVector) = join(pair, "&ndash;")

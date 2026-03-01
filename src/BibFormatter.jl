@@ -12,6 +12,7 @@ include("names.jl")
 include("style_text.jl")
 include("months.jl")
 include("journals.jl")
+include("urls.jl")
 include("format.jl")
 
 
@@ -22,6 +23,7 @@ include("styles/apalike.jl")
 include("styles/ieeetr.jl")
 include("styles/plain.jl")
 include("styles/siam.jl")
+include("styles/urlbst.jl")
 
 # alpha.bst and unsrt.bst currently match plain.bst behavior in this package.
 const Alpha = Plain
@@ -60,6 +62,10 @@ const styles = Dict(
       # P. Rabinowitz, J. Kautsky, S. Elhay, and J. C. Butcher. Cubature formulas of degree nine for
       # symmetric planar regions. \emph{Mathematics of Computation}, 29(131):810-815,
       # 1975.
+  :abbrvurl => Urlbst(Abbrv()),
+  :plainurl => Urlbst(Plain()),
+  :alphaurl => Urlbst(Alpha()),
+  :unsrturl => Urlbst(Unsrt()),
 )
 
 # convert an symbol of bibliography styles into the style type
@@ -90,6 +96,11 @@ end
 "Format a bibtex entry into a string using the given bibtex style"
 function format(data::BibInternal.Entry; style::Symbol = :abbrv, fmt::Symbol = :text)::String
   _format(OutputFormat(fmt), BibliographyStyle(style), data)
+end
+
+"Format a bibtex entry using an explicit bibliography style instance."
+function format(data::BibInternal.Entry, style::BibliographyStyle; fmt::Symbol = :text)::String
+  _format(OutputFormat(fmt), style, data)
 end
 
 

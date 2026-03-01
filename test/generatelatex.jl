@@ -6,6 +6,7 @@ for style in keys(styles)
   texFilename = Filesystem.joinpath(outputDir,"bibliographystyle_" * string(style) * ".tex")
   open(texFilename,"w") do texFile
     println(texFile, "\\documentclass{article}")
+    println(texFile, "\\usepackage{hyperref}")
     println(texFile, "\\begin{document}")
     println(texFile, "\\nocite{*}")
     println(texFile, "\\bibliographystyle{" * string(style) * "}")

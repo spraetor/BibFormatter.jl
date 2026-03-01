@@ -39,7 +39,7 @@ F.~S. von Last, Junior, F.~M. Last2, and F.~M. Last3.
 \newblock This is a note.
 ```
 
-Available bibliography styles:
+## Available bibliography styles:
 
 - `:abbrv`
 - `:acm`
@@ -50,26 +50,28 @@ Available bibliography styles:
 - `:siam`
 - `:unsrt` (alias of `:plain`)
 
-Available output formats:
+## Available output formats:
 
 - `:latex`
 - `:text`
 - `:html`
 - `:md`
 
+### Some examples
+
+Output format `:text`
 ```julia
 println(BibFormatter.format(bibFile["Article"], style=:abbrv, fmt=:text))
 ```
-```
-F. S. von Last, Junior, F. M. Last2, and F. M. Last3. This is a title. Journal, v123(b234):1-2, mm yyyy. This is a note.
+
+> F. S. von Last, Junior, F. M. Last2, and F. M. Last3. This is a title. Journal, v123(b234):1-2, mm yyyy. This is a note.
+
+Output format `:html` with bibliography style `:siam`:
+```julia
+println(BibFormatter.format(bibFile["Article"], style=:siam, fmt=:html))
 ```
 
-```julia
-println(BibFormatter.format(bibFile["Article"], style=:abbrv, fmt=:html))
-```
 ```html
-F.&nbsp;S. von Last, Junior, F.&nbsp;M. Last2, and F.&nbsp;M. Last3.
-This is a title.
-<em>Journal</em>, v123(b234):1&ndash;2, mm yyyy.
+<span class="smallcaps">F.&nbsp;S. von Last, Junior, F.&nbsp;M. Last2, and F.&nbsp;M. Last3</span>, <em>This is a title.</em>, Journal, v123 (yyyy), pp.&nbsp;1&ndash;2.
 This is a note.
 ```

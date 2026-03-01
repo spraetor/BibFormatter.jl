@@ -21,6 +21,7 @@ formatPhDThesis(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = noth
 formatProceedings(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
 formatTechreport(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
 formatUnpublished(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
+formatWebpage(::OutputFormat, ::BibliographyStyle, ::BibInternal.Entry) = nothing
 
 
 function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.Entry)::String
@@ -48,6 +49,8 @@ function _format(fmt::OutputFormat, style::BibliographyStyle, data::BibInternal.
     formatTechreport(fmt, style, data)
   elseif data.type == "unpublished"
     formatUnpublished(fmt, style, data)
+  elseif data.type == "webpage"
+    formatWebpage(fmt, style, data)
   else
     @warn "bibliography type '$(data.type)' not yet implemented"
     nothing

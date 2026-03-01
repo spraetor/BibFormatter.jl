@@ -11,6 +11,7 @@ end
 outputEmph(::OutputFormatLatex, str::AbstractString) = "{\\em $str}"
 outputEmphIc(fmt::OutputFormatLatex, str::AbstractString) = outputEmph(fmt, str * "\\/")
 outputSmallCaps(::OutputFormatLatex, str::AbstractString) = "{\\sc $str}"
+outputLink(::OutputFormatLatex, href::AbstractString, text::AbstractString) = "\\href{$href}{$text}"
 outputQuote(::OutputFormatLatex, str::AbstractString) = "``$str''"
 outputJoinSpace(::OutputFormatLatex, list::AbstractVector) = join(list, "~")
 outputNumberRange(::OutputFormatLatex, pair::AbstractVector) = join(pair, "--")
