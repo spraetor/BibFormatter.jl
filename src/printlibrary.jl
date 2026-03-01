@@ -18,7 +18,7 @@ outputLibraryHeader(fmt::OutputFormatHtml) = """
 <html>
 <head>
 <style>
-.sc { font-variant-caps: small-caps; }
+.smallcaps { font-variant-caps: small-caps; }
 </style>
 </head>
 <body>
